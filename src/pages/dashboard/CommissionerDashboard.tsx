@@ -85,6 +85,7 @@ const CommissionerDashboard = () => {
       <PageHeader
         title="Commissioner Dashboard"
         description="Manage petitions and assign enquiry officers"
+        showLogo={true}
       />
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

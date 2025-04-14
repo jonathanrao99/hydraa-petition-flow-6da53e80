@@ -13,7 +13,6 @@ import {
   ClipboardList,
   Menu,
   X,
-  ChevronDown,
 } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
@@ -204,6 +203,7 @@ const AppShell = ({ children }: AppShellProps) => {
             <div className="mb-2 flex items-center justify-between">
               <Link to="/" className="flex items-center">
                 <img src="/lovable-uploads/f5e69450-5a4c-4abf-81ba-4369d2545598.png" alt="HYDRAA Logo" className="h-10 w-auto" />
+                <span className="ml-2 text-lg font-semibold text-primary">HYDRAA</span>
               </Link>
               <Button variant="ghost" size="icon" onClick={() => setOpen(false)}>
                 <X className="h-5 w-5" />
@@ -249,6 +249,7 @@ const AppShell = ({ children }: AppShellProps) => {
           {mobileNav}
           <Link to="/" className="hidden md:flex items-center">
             <img src="/lovable-uploads/f5e69450-5a4c-4abf-81ba-4369d2545598.png" alt="HYDRAA Logo" className="h-10 w-auto" />
+            <span className="ml-2 text-xl font-semibold text-primary">HYDRAA</span>
           </Link>
         </div>
         <div className="ml-auto flex items-center gap-2">

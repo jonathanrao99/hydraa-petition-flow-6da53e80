@@ -60,7 +60,7 @@ const AdminDashboard = () => {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Link to="/admin/users/new">
+                <Link to="/admin/users">
                   <Button>
                     <Plus className="mr-2 h-4 w-4" />
                     New User
@@ -73,6 +73,7 @@ const AdminDashboard = () => {
             </Tooltip>
           </TooltipProvider>
         }
+        showLogo={true}
       />
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

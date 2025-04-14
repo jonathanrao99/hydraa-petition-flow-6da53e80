@@ -108,15 +108,6 @@ const AppRoutes = () => {
           />
         }
       />
-      <Route
-        path="/reception/petitions/:id"
-        element={
-          <ProtectedRoute
-            element={<AppShell><ReceptionDashboard /></AppShell>}
-            allowedRoles={["Reception", "Admin"]}
-          />
-        }
-      />
       
       {/* Enquiry Officer routes */}
       <Route

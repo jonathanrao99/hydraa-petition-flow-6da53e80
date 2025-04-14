@@ -18,7 +18,7 @@ const PageHeader = ({
   action, 
   tooltip, 
   className,
-  showLogo = false 
+  showLogo = true
 }: PageHeaderProps) => {
   const header = (
     <div className={cn(
