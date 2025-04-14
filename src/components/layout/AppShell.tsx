@@ -203,7 +203,7 @@ const AppShell = ({ children }: AppShellProps) => {
           <div className="px-2 py-2">
             <div className="mb-2 flex items-center justify-between">
               <Link to="/" className="flex items-center">
-                <span className="text-lg font-bold">HYDRAA</span>
+                <img src="/lovable-uploads/f5e69450-5a4c-4abf-81ba-4369d2545598.png" alt="HYDRAA Logo" className="h-10 w-auto" />
               </Link>
               <Button variant="ghost" size="icon" onClick={() => setOpen(false)}>
                 <X className="h-5 w-5" />
@@ -247,8 +247,8 @@ const AppShell = ({ children }: AppShellProps) => {
       <header className="sticky top-0 z-50 flex h-16 items-center border-b bg-background px-4 md:px-6">
         <div className="flex items-center gap-2 md:gap-4">
           {mobileNav}
-          <Link to="/" className="hidden md:flex">
-            <span className="text-xl font-bold">HYDRAA</span>
+          <Link to="/" className="hidden md:flex items-center">
+            <img src="/lovable-uploads/f5e69450-5a4c-4abf-81ba-4369d2545598.png" alt="HYDRAA Logo" className="h-10 w-auto" />
           </Link>
         </div>
         <div className="ml-auto flex items-center gap-2">

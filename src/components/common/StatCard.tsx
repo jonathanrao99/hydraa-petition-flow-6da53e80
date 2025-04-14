@@ -11,7 +11,7 @@ interface StatCardProps {
   trend?: "up" | "down" | "neutral";
   trendValue?: string;
   className?: string;
-  variant?: "default" | "pending" | "complete" | "error" | "info" | "warning";
+  variant?: "default" | "pending" | "complete" | "error" | "info" | "warning" | "not-started" | "success";
 }
 
 const StatCard = ({
@@ -27,32 +27,38 @@ const StatCard = ({
   const getVariantStyles = () => {
     switch (variant) {
       case "pending":
-        return "bg-yellow-50 border-yellow-200";
+        return "bg-orange-50 border-orange-200"; // Soft orange for pending
       case "complete":
-        return "bg-green-50 border-green-200";
+      case "success":
+        return "bg-green-50 border-green-200"; // Green for completed/success
       case "error":
-        return "bg-red-50 border-red-200";
+        return "bg-red-50 border-red-200"; // Red for errors
       case "info":
-        return "bg-blue-50 border-blue-200";
+        return "bg-blue-50 border-blue-200"; // Blue for info
       case "warning":
-        return "bg-orange-50 border-orange-200";
+        return "bg-yellow-50 border-yellow-200"; // Yellow for warnings
+      case "not-started":
+        return "bg-gray-50 border-gray-200"; // Grey for not started
       default:
-        return "";
+        return "bg-white border-gray-100"; // Default is white
     }
   };
 
   const getIconStyles = () => {
     switch (variant) {
       case "pending":
-        return "text-yellow-500";
+        return "text-orange-500";
       case "complete":
+      case "success":
         return "text-green-500";
       case "error":
         return "text-red-500";
       case "info":
         return "text-blue-500";
       case "warning":
-        return "text-orange-500";
+        return "text-yellow-500";
+      case "not-started":
+        return "text-gray-500";
       default:
         return "text-muted-foreground/70";
     }
@@ -67,11 +73,31 @@ const StatCard = ({
     return "text-gray-500";
   };
 
+  const getBackgroundColor = () => {
+    switch (variant) {
+      case "pending":
+        return "bg-orange-100";
+      case "complete":
+      case "success":
+        return "bg-green-100";
+      case "error":
+        return "bg-red-100";
+      case "info":
+        return "bg-blue-100";
+      case "warning":
+        return "bg-yellow-100";
+      case "not-started":
+        return "bg-gray-100";
+      default:
+        return "bg-gray-100";
+    }
+  };
+
   return (
     <Card className={cn("overflow-hidden border transition-all hover:shadow-md", getVariantStyles(), className)}>
       <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
         <p className="text-sm font-medium text-muted-foreground">{title}</p>
-        {icon && <div className={cn("p-1.5 rounded-full bg-opacity-20", getIconStyles(), `bg-${variant === 'default' ? 'gray' : variant}-100`)}>{icon}</div>}
+        {icon && <div className={cn("p-1.5 rounded-full", getIconStyles(), getBackgroundColor())}>{icon}</div>}
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold">{value}</div>

@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, FileText, Clock, CheckCircle } from "lucide-react";
+import { Plus, FileText, Clock, CheckCircle, AlertTriangle } from "lucide-react";
 import PageHeader from "@/components/common/PageHeader";
 import StatCard from "@/components/common/StatCard";
 import StatusBadge from "@/components/common/StatusBadge";
@@ -66,6 +66,7 @@ const ReceptionDashboard = () => {
           icon={<FileText className="h-4 w-4" />}
           trend="up"
           trendValue="16% from last month"
+          variant="info"
         />
         <StatCard
           title="Pending"
@@ -73,13 +74,15 @@ const ReceptionDashboard = () => {
           icon={<Clock className="h-4 w-4" />}
           trend="down"
           trendValue="5% from last month"
+          variant="pending"
         />
         <StatCard
           title="In Progress"
           value="45"
-          icon={<Clock className="h-4 w-4" />}
+          icon={<AlertTriangle className="h-4 w-4" />}
           trend="up"
           trendValue="12% from last month"
+          variant="warning"
         />
         <StatCard
           title="Resolved"
@@ -87,6 +90,7 @@ const ReceptionDashboard = () => {
           icon={<CheckCircle className="h-4 w-4" />}
           trend="up"
           trendValue="18% from last month"
+          variant="success"
         />
       </div>
 

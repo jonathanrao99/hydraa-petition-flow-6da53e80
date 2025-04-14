@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FileText, Clock, CheckCircle } from "lucide-react";
+import { FileText, Clock, CheckCircle, AlertTriangle } from "lucide-react";
 import PageHeader from "@/components/common/PageHeader";
 import StatCard from "@/components/common/StatCard";
 import StatusBadge from "@/components/common/StatusBadge";
@@ -54,6 +54,7 @@ const OfficerDashboard = () => {
           icon={<FileText className="h-4 w-4" />}
           trend="up"
           trendValue="3 new this week"
+          variant="info"
         />
         <StatCard
           title="Pending Investigation"
@@ -61,6 +62,7 @@ const OfficerDashboard = () => {
           icon={<Clock className="h-4 w-4" />}
           trend="neutral"
           trendValue="2 require immediate attention"
+          variant="pending"
         />
         <StatCard
           title="Completed"
@@ -68,6 +70,7 @@ const OfficerDashboard = () => {
           icon={<CheckCircle className="h-4 w-4" />}
           trend="up"
           trendValue="5 this month"
+          variant="success"
         />
       </div>
 
@@ -133,7 +136,13 @@ const OfficerDashboard = () => {
               <div className="space-y-4">
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                   {assignedPetitions.map((petition) => (
-                    <Card key={petition.id}>
+                    <Card key={petition.id} className={
+                      petition.timeBound === "Priority" 
+                        ? "border-red-200 bg-red-50" 
+                        : petition.timeBound === "Immediate"
+                          ? "border-orange-200 bg-orange-50"
+                          : ""
+                    }>
                       <CardContent className="p-4">
                         <div className="space-y-2">
                           <div className="flex items-center justify-between">
