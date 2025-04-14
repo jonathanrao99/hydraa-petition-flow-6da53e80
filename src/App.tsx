@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -12,9 +11,16 @@ import OfficerDashboard from "@/pages/dashboard/OfficerDashboard";
 import CommissionerDashboard from "@/pages/dashboard/CommissionerDashboard";
 import AdminDashboard from "@/pages/dashboard/AdminDashboard";
 import NewPetitionForm from "@/pages/reception/NewPetitionForm";
+import AllPetitions from "@/pages/reception/AllPetitions";
+import AssignedPetitions from "@/pages/officer/AssignedPetitions";
+import Submissions from "@/pages/officer/Submissions";
+import CommissionerAssignedPetitions from "@/pages/commissioner/AssignedPetitions";
+import Decisions from "@/pages/commissioner/Decisions";
 import PetitionAssignment from "@/pages/commissioner/PetitionAssignment";
 import FeedbackSubmission from "@/pages/officer/FeedbackSubmission";
 import UserManagement from "@/pages/admin/UserManagement";
+import AdminPetitions from "@/pages/admin/AdminPetitions";
+import SystemSettings from "@/pages/admin/SystemSettings";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -103,7 +109,7 @@ const AppRoutes = () => {
         path="/reception/petitions"
         element={
           <ProtectedRoute
-            element={<AppShell><ReceptionDashboard /></AppShell>}
+            element={<AppShell><AllPetitions /></AppShell>}
             allowedRoles={["Reception", "Admin"]}
           />
         }
@@ -123,7 +129,7 @@ const AppRoutes = () => {
         path="/officer/assigned"
         element={
           <ProtectedRoute
-            element={<AppShell><OfficerDashboard /></AppShell>}
+            element={<AppShell><AssignedPetitions /></AppShell>}
             allowedRoles={["EnquiryOfficer", "Admin"]}
           />
         }
@@ -141,7 +147,7 @@ const AppRoutes = () => {
         path="/officer/submissions"
         element={
           <ProtectedRoute
-            element={<AppShell><OfficerDashboard /></AppShell>}
+            element={<AppShell><Submissions /></AppShell>}
             allowedRoles={["EnquiryOfficer", "Admin"]}
           />
         }
@@ -179,7 +185,7 @@ const AppRoutes = () => {
         path="/commissioner/assigned"
         element={
           <ProtectedRoute
-            element={<AppShell><CommissionerDashboard /></AppShell>}
+            element={<AppShell><CommissionerAssignedPetitions /></AppShell>}
             allowedRoles={["HOD", "Admin"]}
           />
         }
@@ -188,7 +194,7 @@ const AppRoutes = () => {
         path="/commissioner/decisions"
         element={
           <ProtectedRoute
-            element={<AppShell><CommissionerDashboard /></AppShell>}
+            element={<AppShell><Decisions /></AppShell>}
             allowedRoles={["HOD", "Admin"]}
           />
         }
@@ -217,7 +223,7 @@ const AppRoutes = () => {
         path="/admin/petitions"
         element={
           <ProtectedRoute
-            element={<AppShell><AdminDashboard /></AppShell>}
+            element={<AppShell><AdminPetitions /></AppShell>}
             allowedRoles={["Admin"]}
           />
         }
@@ -226,7 +232,7 @@ const AppRoutes = () => {
         path="/admin/settings"
         element={
           <ProtectedRoute
-            element={<AppShell><AdminDashboard /></AppShell>}
+            element={<AppShell><SystemSettings /></AppShell>}
             allowedRoles={["Admin"]}
           />
         }
@@ -238,18 +244,20 @@ const AppRoutes = () => {
   );
 };
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <AppRoutes />
-        </BrowserRouter>
-      </TooltipProvider>
-    </AuthProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <TooltipProvider>
+          <BrowserRouter>
+            <AppRoutes />
+          </BrowserRouter>
+          <Toaster />
+          <Sonner />
+        </TooltipProvider>
+      </AuthProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;

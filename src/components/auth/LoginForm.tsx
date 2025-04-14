@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -70,7 +69,14 @@ const LoginForm = () => {
   return (
     <Card className="w-full max-w-md">
       <CardHeader className="space-y-1">
-        <CardTitle className="text-2xl font-bold text-center">Sign in to HYDRAA</CardTitle>
+        <div className="text-center">
+          <img 
+            src="/lovable-uploads/logo.png" 
+            alt="HYDRAA Logo" 
+            className="mx-auto mb-4 h-24 w-auto"
+          />
+        </div>
+        <CardTitle className="text-2xl font-bold text-center">HYDRAA</CardTitle>
         <CardDescription className="text-center">
           Hyderabad Disaster Response and Asset Protection Agency
         </CardDescription>

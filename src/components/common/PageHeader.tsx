@@ -1,4 +1,3 @@
-
 import { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -28,7 +27,7 @@ const PageHeader = ({
       <div className="flex items-center gap-3">
         {showLogo && (
           <img 
-            src="/lovable-uploads/f5e69450-5a4c-4abf-81ba-4369d2545598.png" 
+            src="/lovable-uploads/logo.png" 
             alt="HYDRAA Logo" 
             className="h-8 w-auto hidden sm:block" 
           />

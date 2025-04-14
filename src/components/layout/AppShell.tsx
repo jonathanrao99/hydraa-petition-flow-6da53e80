@@ -1,4 +1,3 @@
-
 import { ReactNode } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -202,7 +201,7 @@ const AppShell = ({ children }: AppShellProps) => {
           <div className="px-2 py-2">
             <div className="mb-2 flex items-center justify-between">
               <Link to="/" className="flex items-center">
-                <img src="/lovable-uploads/f5e69450-5a4c-4abf-81ba-4369d2545598.png" alt="HYDRAA Logo" className="h-10 w-auto" />
+                <img src="/lovable-uploads/logo.png" alt="HYDRAA Logo" className="h-10 w-auto" />
                 <span className="ml-2 text-lg font-semibold text-primary">HYDRAA</span>
               </Link>
               <Button variant="ghost" size="icon" onClick={() => setOpen(false)}>
@@ -248,7 +247,7 @@ const AppShell = ({ children }: AppShellProps) => {
         <div className="flex items-center gap-2 md:gap-4">
           {mobileNav}
           <Link to="/" className="hidden md:flex items-center">
-            <img src="/lovable-uploads/f5e69450-5a4c-4abf-81ba-4369d2545598.png" alt="HYDRAA Logo" className="h-10 w-auto" />
+            <img src="/lovable-uploads/logo.png" alt="HYDRAA Logo" className="h-10 w-auto" />
             <span className="ml-2 text-xl font-semibold text-primary">HYDRAA</span>
           </Link>
         </div>
