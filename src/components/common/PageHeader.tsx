@@ -30,7 +30,7 @@ const PageHeader = ({ title, description, action, tooltip, className }: PageHead
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>{header}</TooltipTrigger>
-          <TooltipContent align="start">
+          <TooltipContent align="start" className="max-w-sm p-4 bg-white text-gray-800 shadow-lg rounded-lg">
             <p>{tooltip}</p>
           </TooltipContent>
         </Tooltip>

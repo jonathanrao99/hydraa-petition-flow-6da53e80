@@ -81,7 +81,6 @@ const AppRoutes = () => {
       <Route path="/" element={renderHome()} />
       
       {/* Reception routes */}
-      {/* Reception routes */}
       <Route
         path="/reception"
         element={
@@ -109,10 +108,28 @@ const AppRoutes = () => {
           />
         }
       />
+      <Route
+        path="/reception/petitions/:id"
+        element={
+          <ProtectedRoute
+            element={<AppShell><ReceptionDashboard /></AppShell>}
+            allowedRoles={["Reception", "Admin"]}
+          />
+        }
+      />
       
       {/* Enquiry Officer routes */}
       <Route
         path="/officer"
+        element={
+          <ProtectedRoute
+            element={<AppShell><OfficerDashboard /></AppShell>}
+            allowedRoles={["EnquiryOfficer", "Admin"]}
+          />
+        }
+      />
+      <Route
+        path="/officer/assigned"
         element={
           <ProtectedRoute
             element={<AppShell><OfficerDashboard /></AppShell>}
@@ -142,6 +159,15 @@ const AppRoutes = () => {
       {/* Commissioner (HOD) routes */}
       <Route
         path="/commissioner"
+        element={
+          <ProtectedRoute
+            element={<AppShell><CommissionerDashboard /></AppShell>}
+            allowedRoles={["HOD", "Admin"]}
+          />
+        }
+      />
+      <Route
+        path="/commissioner/pending"
         element={
           <ProtectedRoute
             element={<AppShell><CommissionerDashboard /></AppShell>}

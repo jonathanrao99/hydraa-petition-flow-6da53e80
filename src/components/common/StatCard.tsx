@@ -68,10 +68,10 @@ const StatCard = ({
   };
 
   return (
-    <Card className={cn("overflow-hidden border", getVariantStyles(), className)}>
+    <Card className={cn("overflow-hidden border transition-all hover:shadow-md", getVariantStyles(), className)}>
       <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
         <p className="text-sm font-medium text-muted-foreground">{title}</p>
-        {icon && <div className={cn(getIconStyles())}>{icon}</div>}
+        {icon && <div className={cn("p-1.5 rounded-full bg-opacity-20", getIconStyles(), `bg-${variant === 'default' ? 'gray' : variant}-100`)}>{icon}</div>}
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold">{value}</div>

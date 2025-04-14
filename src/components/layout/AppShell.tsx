@@ -55,7 +55,7 @@ const SidebarNavItem = ({ href, icon: Icon, title, isActive, onClick, tooltip }:
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>{item}</TooltipTrigger>
-          <TooltipContent>
+          <TooltipContent className="bg-white p-2 text-sm shadow-lg rounded-lg">
             <p>{tooltip}</p>
           </TooltipContent>
         </Tooltip>
@@ -182,6 +182,12 @@ const AppShell = ({ children }: AppShellProps) => {
     }
   };
 
+  const isActive = (path: string) => {
+    // Check if the path is either exact match or is a parent of the current path
+    return location.pathname === path || 
+           (path !== "/" && location.pathname.startsWith(path));
+  };
+
   const navItems = getNavItems();
 
   const mobileNav = (
@@ -213,7 +219,7 @@ const AppShell = ({ children }: AppShellProps) => {
                   href={item.href}
                   icon={item.icon}
                   title={item.title}
-                  isActive={location.pathname === item.href}
+                  isActive={isActive(item.href)}
                   onClick={() => setOpen(false)}
                 />
               ))}
@@ -249,9 +255,18 @@ const AppShell = ({ children }: AppShellProps) => {
           {currentUser && (
             <div className="hidden md:flex items-center gap-4">
               <div className="flex items-center">
-                <span className="text-sm mr-2">
-                  {currentUser.name} ({currentUser.designation})
-                </span>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="text-sm mr-2">
+                        {currentUser.name} ({currentUser.designation})
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Logged in as {currentUser.role}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
                 <Button variant="outline" size="sm" onClick={handleLogout}>
                   <LogOut className="h-4 w-4 mr-1" />
                   Logout
@@ -273,7 +288,7 @@ const AppShell = ({ children }: AppShellProps) => {
                       href={item.href}
                       icon={item.icon}
                       title={item.title}
-                      isActive={location.pathname === item.href}
+                      isActive={isActive(item.href)}
                       tooltip={item.tooltip}
                     />
                   ))}
