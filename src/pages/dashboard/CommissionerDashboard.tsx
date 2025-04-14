@@ -94,6 +94,7 @@ const CommissionerDashboard = () => {
           icon={<Clock className="h-4 w-4" />}
           trend="up"
           trendValue="2 new today"
+          variant="pending"
         />
         <StatCard
           title="Under Investigation"
@@ -101,6 +102,7 @@ const CommissionerDashboard = () => {
           icon={<UserCheck className="h-4 w-4" />}
           trend="neutral"
           trendValue="3 awaiting reports"
+          variant="info"
         />
         <StatCard
           title="Decisions Made"
@@ -108,6 +110,7 @@ const CommissionerDashboard = () => {
           icon={<CheckCircle className="h-4 w-4" />}
           trend="up"
           trendValue="5 this month"
+          variant="complete"
         />
         <StatCard
           title="Total Officers"
@@ -174,7 +177,7 @@ const CommissionerDashboard = () => {
                 {[...pendingPetitions, ...assignedPetitions]
                   .slice(0, 3)
                   .map((petition) => (
-                    <Card key={petition.id}>
+                    <Card key={petition.id} className={petition.status === "Pending" ? "border-yellow-200" : "border-blue-200"}>
                       <CardContent className="p-4">
                         <div className="space-y-2">
                           <div className="flex items-center justify-between">

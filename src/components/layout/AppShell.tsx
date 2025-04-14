@@ -18,6 +18,7 @@ import {
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface AppShellProps {
   children: ReactNode;
@@ -29,23 +30,41 @@ interface SidebarNavItemProps {
   title: string;
   isActive?: boolean;
   onClick?: () => void;
+  tooltip?: string;
 }
 
-const SidebarNavItem = ({ href, icon: Icon, title, isActive, onClick }: SidebarNavItemProps) => (
-  <Link
-    to={href}
-    onClick={onClick}
-    className={cn(
-      "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all",
-      isActive
-        ? "bg-primary text-primary-foreground"
-        : "text-muted-foreground hover:bg-muted hover:text-foreground"
-    )}
-  >
-    <Icon className="h-4 w-4" />
-    <span>{title}</span>
-  </Link>
-);
+const SidebarNavItem = ({ href, icon: Icon, title, isActive, onClick, tooltip }: SidebarNavItemProps) => {
+  const item = (
+    <Link
+      to={href}
+      onClick={onClick}
+      className={cn(
+        "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all",
+        isActive
+          ? "bg-primary text-primary-foreground"
+          : "text-muted-foreground hover:bg-muted hover:text-foreground"
+      )}
+    >
+      <Icon className="h-4 w-4" />
+      <span>{title}</span>
+    </Link>
+  );
+
+  if (tooltip) {
+    return (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>{item}</TooltipTrigger>
+          <TooltipContent>
+            <p>{tooltip}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    );
+  }
+
+  return item;
+};
 
 const AppShell = ({ children }: AppShellProps) => {
   const { currentUser, logout } = useAuth();
@@ -64,29 +83,99 @@ const AppShell = ({ children }: AppShellProps) => {
     switch (currentUser.role) {
       case "Reception":
         return [
-          { href: "/reception", icon: LayoutDashboard, title: "Dashboard" },
-          { href: "/reception/new-petition", icon: FileText, title: "New Petition" },
-          { href: "/reception/petitions", icon: ClipboardList, title: "All Petitions" },
+          { 
+            href: "/reception", 
+            icon: LayoutDashboard, 
+            title: "Dashboard",
+            tooltip: "View all petitions and their statuses" 
+          },
+          { 
+            href: "/reception/new-petition", 
+            icon: FileText, 
+            title: "New Petition",
+            tooltip: "Create a new petition in the system" 
+          },
+          { 
+            href: "/reception/petitions", 
+            icon: ClipboardList, 
+            title: "All Petitions",
+            tooltip: "View and track all submitted petitions" 
+          },
         ];
       case "EnquiryOfficer":
         return [
-          { href: "/officer", icon: LayoutDashboard, title: "Dashboard" },
-          { href: "/officer/assigned", icon: ClipboardList, title: "Assigned Petitions" },
-          { href: "/officer/submissions", icon: FileText, title: "My Submissions" },
+          { 
+            href: "/officer", 
+            icon: LayoutDashboard, 
+            title: "Dashboard",
+            tooltip: "Overview of assigned petitions" 
+          },
+          { 
+            href: "/officer/assigned", 
+            icon: ClipboardList, 
+            title: "Assigned Petitions",
+            tooltip: "View petitions assigned to you for investigation" 
+          },
+          { 
+            href: "/officer/submissions", 
+            icon: FileText, 
+            title: "My Submissions",
+            tooltip: "View your submitted investigation reports" 
+          },
         ];
       case "HOD":
         return [
-          { href: "/commissioner", icon: LayoutDashboard, title: "Dashboard" },
-          { href: "/commissioner/pending", icon: ClipboardList, title: "Pending Assignments" },
-          { href: "/commissioner/assigned", icon: FileText, title: "Assigned Petitions" },
-          { href: "/commissioner/decisions", icon: FileText, title: "Final Decisions" },
+          { 
+            href: "/commissioner", 
+            icon: LayoutDashboard, 
+            title: "Dashboard",
+            tooltip: "Overall petition status and statistics" 
+          },
+          { 
+            href: "/commissioner/pending", 
+            icon: ClipboardList, 
+            title: "Pending Assignments",
+            tooltip: "Petitions waiting for officer assignment" 
+          },
+          { 
+            href: "/commissioner/assigned", 
+            icon: FileText, 
+            title: "Assigned Petitions",
+            tooltip: "Track petitions under investigation" 
+          },
+          { 
+            href: "/commissioner/decisions", 
+            icon: FileText, 
+            title: "Final Decisions",
+            tooltip: "View and make final decisions on petitions" 
+          },
         ];
       case "Admin":
         return [
-          { href: "/admin", icon: LayoutDashboard, title: "Dashboard" },
-          { href: "/admin/users", icon: Users, title: "User Management" },
-          { href: "/admin/petitions", icon: ClipboardList, title: "All Petitions" },
-          { href: "/admin/settings", icon: Settings, title: "System Settings" },
+          { 
+            href: "/admin", 
+            icon: LayoutDashboard, 
+            title: "Dashboard",
+            tooltip: "System overview and statistics" 
+          },
+          { 
+            href: "/admin/users", 
+            icon: Users, 
+            title: "User Management",
+            tooltip: "Manage system users and their permissions" 
+          },
+          { 
+            href: "/admin/petitions", 
+            icon: ClipboardList, 
+            title: "All Petitions",
+            tooltip: "View and manage all petitions in the system" 
+          },
+          { 
+            href: "/admin/settings", 
+            icon: Settings, 
+            title: "System Settings",
+            tooltip: "Configure system-wide settings" 
+          },
         ];
       default:
         return [];
@@ -185,6 +274,7 @@ const AppShell = ({ children }: AppShellProps) => {
                       icon={item.icon}
                       title={item.title}
                       isActive={location.pathname === item.href}
+                      tooltip={item.tooltip}
                     />
                   ))}
                 </nav>

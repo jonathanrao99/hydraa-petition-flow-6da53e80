@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FileText, Users, Settings, Database, Plus } from "lucide-react";
 import PageHeader from "@/components/common/PageHeader";
 import StatCard from "@/components/common/StatCard";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 // Mock data - would be fetched from API in a real app
 const recentUsers = [
@@ -17,6 +18,7 @@ const recentUsers = [
     designation: "DCP",
     role: "Reception",
     email: "reception@hydraa.gov.in",
+    userId: "John/DCP"
   },
   {
     id: "2",
@@ -25,6 +27,7 @@ const recentUsers = [
     designation: "ACP",
     role: "EnquiryOfficer",
     email: "officer@hydraa.gov.in",
+    userId: "Jane/ACP"
   },
   {
     id: "3",
@@ -33,8 +36,17 @@ const recentUsers = [
     designation: "DCP",
     role: "HOD",
     email: "commissioner@hydraa.gov.in",
+    userId: "Michael/DCP"
   },
 ];
+
+// Role descriptions for tooltips
+const roleDescriptions = {
+  Reception: "Can create petitions and view all petition statuses",
+  EnquiryOfficer: "Can investigate assigned petitions and submit reports",
+  HOD: "Can assign officers, review reports, and make final decisions",
+  Admin: "Has full access to all system features and user management",
+};
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
@@ -45,12 +57,21 @@ const AdminDashboard = () => {
         title="Admin Dashboard"
         description="System administration and user management"
         action={
-          <Link to="/admin/users/new">
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              New User
-            </Button>
-          </Link>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link to="/admin/users/new">
+                  <Button>
+                    <Plus className="mr-2 h-4 w-4" />
+                    New User
+                  </Button>
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Create a new user account in the system</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         }
       />
 
@@ -61,6 +82,7 @@ const AdminDashboard = () => {
           icon={<Users className="h-4 w-4" />}
           trend="up"
           trendValue="2 added this month"
+          variant="info"
         />
         <StatCard
           title="Total Petitions"
@@ -68,6 +90,7 @@ const AdminDashboard = () => {
           icon={<FileText className="h-4 w-4" />}
           trend="up"
           trendValue="42 this month"
+          variant="complete"
         />
         <StatCard
           title="Database Size"
@@ -75,6 +98,7 @@ const AdminDashboard = () => {
           icon={<Database className="h-4 w-4" />}
           trend="up"
           trendValue="0.2 GB increase"
+          variant="warning"
         />
         <StatCard
           title="System Status"
@@ -82,6 +106,7 @@ const AdminDashboard = () => {
           icon={<Settings className="h-4 w-4" />}
           trend="neutral"
           trendValue="All systems operational"
+          variant="complete"
         />
       </div>
 
@@ -98,7 +123,7 @@ const AdminDashboard = () => {
             </CardHeader>
             <CardContent>
               <div className="grid gap-4 md:grid-cols-2">
-                <Card>
+                <Card className="border-blue-100">
                   <CardHeader>
                     <CardTitle className="text-base">User Distribution</CardTitle>
                   </CardHeader>
@@ -123,7 +148,7 @@ const AdminDashboard = () => {
                     </div>
                   </CardContent>
                 </Card>
-                <Card>
+                <Card className="border-green-100">
                   <CardHeader>
                     <CardTitle className="text-base">Petition Statistics</CardTitle>
                   </CardHeader>
@@ -131,19 +156,19 @@ const AdminDashboard = () => {
                     <div className="space-y-2">
                       <div className="flex justify-between">
                         <span>Pending</span>
-                        <span className="font-medium">45</span>
+                        <span className="font-medium bg-yellow-50 px-2 py-0.5 rounded">45</span>
                       </div>
                       <div className="flex justify-between">
                         <span>Assigned</span>
-                        <span className="font-medium">87</span>
+                        <span className="font-medium bg-blue-50 px-2 py-0.5 rounded">87</span>
                       </div>
                       <div className="flex justify-between">
                         <span>Under Investigation</span>
-                        <span className="font-medium">132</span>
+                        <span className="font-medium bg-purple-50 px-2 py-0.5 rounded">132</span>
                       </div>
                       <div className="flex justify-between">
                         <span>Decision Made</span>
-                        <span className="font-medium">78</span>
+                        <span className="font-medium bg-green-50 px-2 py-0.5 rounded">78</span>
                       </div>
                     </div>
                   </CardContent>
@@ -159,7 +184,7 @@ const AdminDashboard = () => {
             <CardContent>
               <div className="rounded-md border">
                 <div className="grid grid-cols-1 md:grid-cols-5 p-3 font-medium">
-                  <div>Employee ID</div>
+                  <div>User ID</div>
                   <div>Name</div>
                   <div>Role</div>
                   <div>Designation</div>
@@ -168,9 +193,21 @@ const AdminDashboard = () => {
                 <div className="divide-y">
                   {recentUsers.map((user) => (
                     <div key={user.id} className="grid grid-cols-1 md:grid-cols-5 p-3 items-center">
-                      <div className="font-medium">{user.employeeId}</div>
+                      <div className="font-medium">{user.userId}</div>
                       <div>{user.name}</div>
-                      <div>{user.role}</div>
+                      <div className="flex items-center">
+                        {user.role}
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <span className="inline-block w-4 h-4 rounded-full bg-muted ml-1.5 cursor-help text-center text-xs leading-4">?</span>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>{roleDescriptions[user.role as keyof typeof roleDescriptions]}</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </div>
                       <div>{user.designation}</div>
                       <div className="flex justify-end">
                         <Link to={`/admin/users/${user.id}`}>
@@ -205,7 +242,7 @@ const AdminDashboard = () => {
             <CardContent>
               <div className="rounded-md border">
                 <div className="grid grid-cols-1 md:grid-cols-6 p-3 font-medium">
-                  <div>Employee ID</div>
+                  <div>User ID</div>
                   <div>Name</div>
                   <div>Email</div>
                   <div>Role</div>
@@ -215,22 +252,41 @@ const AdminDashboard = () => {
                 <div className="divide-y">
                   {recentUsers.map((user) => (
                     <div key={user.id} className="grid grid-cols-1 md:grid-cols-6 p-3 items-center">
-                      <div className="font-medium">{user.employeeId}</div>
+                      <div className="font-medium">{user.userId}</div>
                       <div>{user.name}</div>
                       <div className="truncate max-w-[150px]">{user.email}</div>
                       <div>{user.role}</div>
                       <div>{user.designation}</div>
                       <div className="flex justify-end">
-                        <Link to={`/admin/users/${user.id}`}>
-                          <Button variant="ghost" size="sm">
-                            View
-                          </Button>
-                        </Link>
-                        <Link to={`/admin/users/${user.id}/edit`}>
-                          <Button variant="ghost" size="sm">
-                            Edit
-                          </Button>
-                        </Link>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Link to={`/admin/users/${user.id}`}>
+                                <Button variant="ghost" size="sm">
+                                  View
+                                </Button>
+                              </Link>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>View user details</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                        
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Link to={`/admin/users/${user.id}/edit`}>
+                                <Button variant="ghost" size="sm">
+                                  Edit
+                                </Button>
+                              </Link>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Edit user details</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                       </div>
                     </div>
                   ))}
@@ -247,7 +303,7 @@ const AdminDashboard = () => {
             <CardContent>
               <div className="space-y-4">
                 <div className="grid gap-4 md:grid-cols-2">
-                  <Card>
+                  <Card className="border-blue-100">
                     <CardHeader>
                       <CardTitle className="text-base">Database Management</CardTitle>
                     </CardHeader>
@@ -266,14 +322,23 @@ const AdminDashboard = () => {
                           <span className="font-medium">12,485</span>
                         </div>
                         <div className="pt-2">
-                          <Button variant="outline" size="sm" className="w-full">
-                            Backup Database
-                          </Button>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button variant="outline" size="sm" className="w-full">
+                                  Backup Database
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Create a new backup of the entire database</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
                         </div>
                       </div>
                     </CardContent>
                   </Card>
-                  <Card>
+                  <Card className="border-green-100">
                     <CardHeader>
                       <CardTitle className="text-base">System Performance</CardTitle>
                     </CardHeader>
@@ -292,9 +357,18 @@ const AdminDashboard = () => {
                           <span className="font-medium">28%</span>
                         </div>
                         <div className="pt-2">
-                          <Button variant="outline" size="sm" className="w-full">
-                            View System Logs
-                          </Button>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button variant="outline" size="sm" className="w-full">
+                                  View System Logs
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>View detailed system performance logs</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
                         </div>
                       </div>
                     </CardContent>

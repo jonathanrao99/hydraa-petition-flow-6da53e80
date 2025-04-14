@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, Plus, Search, Edit, Trash } from "lucide-react";
+import { Users, Plus, Search, Edit, Trash, Info } from "lucide-react";
 import PageHeader from "@/components/common/PageHeader";
 import {
   Dialog,
@@ -37,6 +37,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { generateUserId } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 // Mock users data - would be fetched from an API in a real app
 const mockUsers = [
@@ -250,16 +251,33 @@ const UserManagement = () => {
     setIsDialogOpen(true);
   };
 
+  // Role descriptions for tooltips
+  const roleDescriptions = {
+    Reception: "Can create petitions and view all petition statuses",
+    EnquiryOfficer: "Can investigate assigned petitions and submit reports",
+    HOD: "Can assign officers, review reports, and make final decisions",
+    Admin: "Has full access to all system features and user management",
+  };
+
   return (
     <div className="space-y-6">
       <PageHeader
         title="User Management"
         description="Manage user accounts and access permissions"
         action={
-          <Button onClick={openNewUserDialog}>
-            <Plus className="mr-2 h-4 w-4" />
-            Add User
-          </Button>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button onClick={openNewUserDialog}>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Add User
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Create a new user account in the system</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         }
       />
 
@@ -283,7 +301,7 @@ const UserManagement = () => {
         <CardContent>
           <div className="rounded-md border">
             <div className="grid grid-cols-12 p-3 font-medium border-b">
-              <div className="col-span-2">Employee ID</div>
+              <div className="col-span-2">User ID</div>
               <div className="col-span-2">Name</div>
               <div className="col-span-2">Role</div>
               <div className="col-span-2">Designation</div>
@@ -294,26 +312,57 @@ const UserManagement = () => {
               {filteredUsers.length > 0 ? (
                 filteredUsers.map((user) => (
                   <div key={user.id} className="grid grid-cols-12 p-3 items-center">
-                    <div className="col-span-2 font-medium">{user.employeeId}</div>
+                    <div className="col-span-2 font-medium">{user.userId}</div>
                     <div className="col-span-2">{user.name}</div>
-                    <div className="col-span-2">{user.role}</div>
+                    <div className="col-span-2 flex items-center">
+                      {user.role}
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Info className="h-4 w-4 ml-1.5 text-muted-foreground cursor-help" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>{roleDescriptions[user.role as keyof typeof roleDescriptions]}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
                     <div className="col-span-2">{user.designation}</div>
                     <div className="col-span-2 truncate">{user.email}</div>
                     <div className="col-span-2 flex justify-end space-x-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleEditUser(user)}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleDeleteUser(user.id)}
-                      >
-                        <Trash className="h-4 w-4 text-destructive" />
-                      </Button>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleEditUser(user)}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Edit user details</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                      
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleDeleteUser(user.id)}
+                            >
+                              <Trash className="h-4 w-4 text-destructive" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Delete user account</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                     </div>
                   </div>
                 ))
@@ -426,6 +475,9 @@ const UserManagement = () => {
                           ))}
                         </SelectContent>
                       </Select>
+                      <FormDescription>
+                        {field.value && roleDescriptions[field.value as keyof typeof roleDescriptions]}
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
