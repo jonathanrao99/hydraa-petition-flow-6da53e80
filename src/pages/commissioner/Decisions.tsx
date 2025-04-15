@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Filter, CheckCircle, XCircle } from "lucide-react";
+import { Search, Filter } from "lucide-react";
 import PageHeader from "@/components/common/PageHeader";
 import StatusBadge from "@/components/common/StatusBadge";
 
@@ -15,7 +15,7 @@ const pendingDecisions = [
     petitionNumber: "PTN00004/2025",
     petitionerName: "Lakshmi Devi",
     submissionDate: "18-04-2024",
-    status: "Under Investigation",
+    status: "Under Investigation" as const,
     officerRecommendation: "Action Required",
     assignedOfficers: ["Jane Smith", "Rao Kumar"],
     evidenceCount: 5
@@ -25,7 +25,7 @@ const pendingDecisions = [
     petitionNumber: "PTN00005/2025",
     petitionerName: "Ravi Reddy",
     submissionDate: "17-04-2024",
-    status: "Under Investigation",
+    status: "Under Investigation" as const,
     officerRecommendation: "No Action Required",
     assignedOfficers: ["Anjali Sharma"],
     evidenceCount: 3
@@ -35,7 +35,7 @@ const pendingDecisions = [
     petitionNumber: "PTN00006/2025",
     petitionerName: "Mohammed Ali",
     submissionDate: "16-04-2024",
-    status: "Under Investigation",
+    status: "Under Investigation" as const,
     officerRecommendation: "Action Required",
     assignedOfficers: ["Jane Smith"],
     evidenceCount: 7
@@ -45,6 +45,7 @@ const pendingDecisions = [
 const Decisions = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [recommendationFilter, setRecommendationFilter] = useState("all");
+  const navigate = useNavigate();
 
   const filteredPetitions = pendingDecisions.filter(petition => {
     const matchesSearch = 
@@ -56,6 +57,10 @@ const Decisions = () => {
     
     return matchesSearch && matchesRecommendation;
   });
+
+  const handleReviewClick = (petitionId: string) => {
+    navigate(`/commissioner/decisions/${petitionId}/review`, { replace: true });
+  };
 
   return (
     <div className="space-y-6">
@@ -140,18 +145,13 @@ const Decisions = () => {
                         {petition.officerRecommendation}
                       </span>
                     </div>
-                    <div className="flex justify-end gap-2">
-                      <Link to={`/commissioner/decisions/${petition.id}`}>
-                        <Button variant="ghost" size="sm">
-                          Review
-                        </Button>
-                      </Link>
+                    <div className="flex justify-end">
                       <Button 
                         variant="outline" 
                         size="sm"
-                        onClick={() => window.location.href = `/commissioner/decisions/${petition.id}/make-decision`}
+                        onClick={() => handleReviewClick(petition.id)}
                       >
-                        Make Decision
+                        Review
                       </Button>
                     </div>
                   </div>

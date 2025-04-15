@@ -16,12 +16,14 @@ import AssignedPetitions from "@/pages/officer/AssignedPetitions";
 import Submissions from "@/pages/officer/Submissions";
 import CommissionerAssignedPetitions from "@/pages/commissioner/AssignedPetitions";
 import Decisions from "@/pages/commissioner/Decisions";
+import DecisionReview from "@/pages/commissioner/DecisionReview";
 import PetitionAssignment from "@/pages/commissioner/PetitionAssignment";
 import FeedbackSubmission from "@/pages/officer/FeedbackSubmission";
 import UserManagement from "@/pages/admin/UserManagement";
 import AdminPetitions from "@/pages/admin/AdminPetitions";
 import SystemSettings from "@/pages/admin/SystemSettings";
 import NotFound from "@/pages/NotFound";
+import PendingPetitions from "@/pages/commissioner/PendingPetitions";
 
 const queryClient = new QueryClient();
 
@@ -167,7 +169,7 @@ const AppRoutes = () => {
         path="/commissioner/pending"
         element={
           <ProtectedRoute
-            element={<AppShell><CommissionerDashboard /></AppShell>}
+            element={<AppShell><PendingPetitions /></AppShell>}
             allowedRoles={["HOD", "Admin"]}
           />
         }
@@ -195,6 +197,15 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute
             element={<AppShell><Decisions /></AppShell>}
+            allowedRoles={["HOD", "Admin"]}
+          />
+        }
+      />
+      <Route
+        path="/commissioner/decisions/:id/review"
+        element={
+          <ProtectedRoute
+            element={<AppShell><DecisionReview /></AppShell>}
             allowedRoles={["HOD", "Admin"]}
           />
         }
