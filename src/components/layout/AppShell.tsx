@@ -202,7 +202,7 @@ const AppShell = ({ children }: AppShellProps) => {
             <div className="mb-2 flex items-center justify-between">
               <Link to="/" className="flex items-center">
                 <img src="/lovable-uploads/logo.png" alt="HYDRAA Logo" className="h-10 w-auto" />
-                <span className="ml-2 text-lg font-semibold text-primary">HYDRAA</span>
+                <span className="ml-2 text-lg font-semibold text-primary">Hyderabad Disaster Response and Asset Protection Agency</span>
               </Link>
               <Button variant="ghost" size="icon" onClick={() => setOpen(false)}>
                 <X className="h-5 w-5" />
@@ -248,7 +248,7 @@ const AppShell = ({ children }: AppShellProps) => {
           {mobileNav}
           <Link to="/" className="hidden md:flex items-center">
             <img src="/lovable-uploads/logo.png" alt="HYDRAA Logo" className="h-10 w-auto" />
-            <span className="ml-2 text-xl font-semibold text-primary">HYDRAA</span>
+            <span className="ml-2 text-xl font-semibold text-primary">Hyderabad Disaster Response and Asset Protection Agency</span>
           </Link>
         </div>
         <div className="ml-auto flex items-center gap-2">

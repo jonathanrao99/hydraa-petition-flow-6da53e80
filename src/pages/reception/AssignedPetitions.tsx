@@ -22,10 +22,10 @@ interface Petition {
 }
 
 // Mock data - would be fetched from API in a real app
-const petitions: Petition[] = [
+const mockPetitions = [
   {
     id: "1",
-    petitionNumber: "PTN000012024",
+    petitionNumber: "PTN00001/2024",
     petitionerName: "Rajesh Kumar",
     date: "15-04-2024",
     status: "Assigned",
@@ -35,7 +35,7 @@ const petitions: Petition[] = [
   },
   {
     id: "2",
-    petitionNumber: "PTN000022024",
+    petitionNumber: "PTN00002/2024",
     petitionerName: "Priya Sharma",
     date: "14-04-2024",
     status: "Under Investigation",
@@ -45,7 +45,7 @@ const petitions: Petition[] = [
   },
   {
     id: "3",
-    petitionNumber: "PTN000032024",
+    petitionNumber: "PTN00003/2024",
     petitionerName: "Suresh Reddy",
     date: "13-04-2024",
     status: "Decision Made",

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -30,7 +29,7 @@ const officers = [
 // Mock petition data - in a real app, this would be fetched from an API
 const petitionData = {
   id: "1",
-  petitionNumber: "PTN000012024",
+  petitionNumber: "PTN00001/2025",
   date: "15-04-2024",
   petitionType: "General",
   petitionerName: "Rajesh Kumar",

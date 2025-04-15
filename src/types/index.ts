@@ -1,4 +1,3 @@
-
 // User Types
 export interface User {
   id: string;
@@ -14,7 +13,7 @@ export interface User {
 // Petition Types
 export interface Petition {
   id: string;
-  petitionNumber: string; // Auto-generated (e.g., PTN00001YEAR)
+  petitionNumber: string; // Auto-generated (e.g., PTN00001/2025)
   date: string;
   petitionType: 'General' | 'Prajavani' | 'Email' | 'WhatsApp' | 'Twitter' | 'Other';
   petitionerName: string;

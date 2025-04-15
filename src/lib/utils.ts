@@ -1,4 +1,3 @@
-
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
@@ -6,16 +5,16 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-// Generate a unique petition number in the format PTN00001YEAR
+// Generate a unique petition number in the format PTN00001/Year
 export function generatePetitionNumber(): string {
   const date = new Date();
-  const year = date.getFullYear();
+  const year = 2025; // Fixed to 2025 as per requirements
   
   // In a real app, this would fetch the last petition number from the database
   // For demo purposes, we'll use a random number
   const count = Math.floor(Math.random() * 1000) + 1;
   
-  return `PTN${count.toString().padStart(5, '0')}${year}`;
+  return `PTN${count.toString().padStart(5, '0')}/${year}`;
 }
 
 // Generate a user ID based on name and designation

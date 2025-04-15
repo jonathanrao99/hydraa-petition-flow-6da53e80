@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -44,8 +43,12 @@ const formSchema = z.object({
   date: z.date(),
   petitionType: z.string(),
   submittedBy: z.string(),
+  subject: z.string().min(10, { message: "Subject must be at least 10 characters" }),
   complaintDetails: z.string().min(10, { message: "Complaint details must be at least 10 characters" }),
-  respondentInfo: z.string().optional(),
+  respondentName: z.string().min(3, { message: "Respondent name must be at least 3 characters" }),
+  respondentAddress: z.string().min(5, { message: "Respondent address must be at least 5 characters" }),
+  respondentPhone: z.string().min(10, { message: "Phone number must be at least 10 digits" }),
+  encroachmentAddress: z.string().min(10, { message: "Encroachment address must be at least 10 characters" }),
   initialRemark: z.string().optional(),
   timeBound: z.string(),
   // These will be handled separately
@@ -66,6 +69,7 @@ const NewPetitionForm = () => {
   const { currentUser } = useAuth();
   const [location, setLocation] = useState({ level1: "", level2: "", level3: "" });
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+  const [petitionNumber] = useState(generatePetitionNumber());
   
   // Create form
   const form = useForm<FormValues>({
@@ -77,8 +81,12 @@ const NewPetitionForm = () => {
       date: new Date(),
       petitionType: "",
       submittedBy: "",
+      subject: "",
       complaintDetails: "",
-      respondentInfo: "",
+      respondentName: "",
+      respondentAddress: "",
+      respondentPhone: "",
+      encroachmentAddress: "",
       initialRemark: "",
       timeBound: "",
     },
@@ -118,7 +126,12 @@ const NewPetitionForm = () => {
 
       <Card>
         <CardHeader>
-          <CardTitle>Petition Details</CardTitle>
+          <div className="flex justify-between items-center">
+            <CardTitle>Petition Details</CardTitle>
+            <div className="text-lg font-semibold">
+              HYDRAA Petition Number: <span className="text-primary text-xl font-bold">{petitionNumber}</span>
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -265,62 +278,30 @@ const NewPetitionForm = () => {
                       </FormItem>
                     )}
                   />
-                  
-                  <FormField
-                    control={form.control}
-                    name="timeBound"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Time Bound for Enquiry</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select priority" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {TIME_BOUND_OPTIONS.map((option) => (
-                              <SelectItem key={option.value} value={option.value}>
-                                {option.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormDescription>
-                          Priority petitions are processed first
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
                 </div>
               </div>
               
               <div className="space-y-4">
-                <h3 className="text-lg font-medium">Encroachment Details</h3>
+                <h3 className="text-lg font-medium">Petition Details</h3>
                 
-                <div className="grid gap-6 md:grid-cols-2">
-                  <div>
-                    <CascadingLocationDropdown
-                      locationData={LOCATION_DATA}
-                      onChange={setLocation}
-                      value={location}
-                    />
-                  </div>
-                  
-                  <div>
-                    <EncroachmentTypeSelector
-                      types={ENCROACHMENT_TYPES}
-                      selectedTypes={selectedTypes}
-                      onChange={setSelectedTypes}
-                    />
-                  </div>
-                </div>
-              </div>
-              
-              <div className="space-y-4">
-                <h3 className="text-lg font-medium">Complaint Details</h3>
-                
+                <FormField
+                  control={form.control}
+                  name="subject"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Subject of Petition/Complaint</FormLabel>
+                      <FormControl>
+                        <Textarea 
+                          placeholder="Enter the subject of your petition/complaint" 
+                          {...field} 
+                          rows={2}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
                 <FormField
                   control={form.control}
                   name="complaintDetails"
@@ -338,16 +319,37 @@ const NewPetitionForm = () => {
                     </FormItem>
                   )}
                 />
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">Respondent Details</h3>
                 
                 <FormField
                   control={form.control}
-                  name="respondentInfo"
+                  name="respondentName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Respondent Information</FormLabel>
+                      <FormLabel>Respondent Name</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="Enter respondent's name" 
+                          {...field} 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="respondentAddress"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Respondent Address</FormLabel>
                       <FormControl>
                         <Textarea 
-                          placeholder="Enter details about the respondent/accused" 
+                          placeholder="Enter respondent's address" 
                           {...field} 
                           rows={3}
                         />
@@ -356,6 +358,64 @@ const NewPetitionForm = () => {
                     </FormItem>
                   )}
                 />
+
+                <FormField
+                  control={form.control}
+                  name="respondentPhone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Respondent Phone Number</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="tel"
+                          placeholder="Enter respondent's phone number" 
+                          {...field} 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">Encroachment Details</h3>
+                
+                <FormField
+                  control={form.control}
+                  name="encroachmentAddress"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Full Address of Encroachment</FormLabel>
+                      <FormControl>
+                        <Textarea 
+                          placeholder="Enter the complete address of the encroachment" 
+                          {...field} 
+                          rows={3}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="grid gap-6 md:grid-cols-2">
+                  <div>
+                    <CascadingLocationDropdown
+                      locationData={LOCATION_DATA}
+                      onChange={setLocation}
+                      value={location}
+                    />
+                  </div>
+                  
+                  <div>
+                    <EncroachmentTypeSelector
+                      types={ENCROACHMENT_TYPES}
+                      selectedTypes={selectedTypes}
+                      onChange={setSelectedTypes}
+                    />
+                  </div>
+                </div>
               </div>
               
               <div className="space-y-4">
@@ -401,6 +461,36 @@ const NewPetitionForm = () => {
                     )}
                   />
                 </div>
+              </div>
+
+              <div className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="timeBound"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Time Bound for Enquiry</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select priority" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {TIME_BOUND_OPTIONS.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormDescription>
+                        Priority petitions are processed first
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
               
               <div className="flex justify-end space-x-4">

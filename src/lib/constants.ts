@@ -1,4 +1,3 @@
-
 // Demo encroachment zones for cascading dropdown
 export const LOCATION_DATA = [
   {
@@ -42,6 +41,69 @@ export const LOCATION_DATA = [
           { name: "Abids" },
           { name: "Nampally" },
           { name: "Koti" }
+        ]
+      }
+    ]
+  },
+  {
+    name: "Cyberbad",
+    children: [
+      {
+        name: "North",
+        children: [
+          { name: "HITEC City" },
+          { name: "Gachibowli" },
+          { name: "Nanakramguda" }
+        ]
+      },
+      {
+        name: "South",
+        children: [
+          { name: "Madhapur" },
+          { name: "Kondapur" },
+          { name: "Jubilee Hills" }
+        ]
+      }
+    ]
+  },
+  {
+    name: "Rachakonda",
+    children: [
+      {
+        name: "North",
+        children: [
+          { name: "Uppal" },
+          { name: "Nagole" },
+          { name: "Boduppal" }
+        ]
+      },
+      {
+        name: "South",
+        children: [
+          { name: "LB Nagar" },
+          { name: "Vanastalipuram" },
+          { name: "Hayathnagar" }
+        ]
+      }
+    ]
+  },
+  {
+    name: "Sangareddy",
+    children: [
+      {
+        name: "North",
+        children: [
+          { name: "Patancheru" },
+          { name: "Bollaram" },
+          { name: "Jinnaram" }
+        ]
+      },
+      {
+        name: "South",
+        children: [
+          { name: "Sangareddy" },
+          { name: "Zaheerabad" },
+          { name: "Narayankhed" }
         ]
       }
     ]

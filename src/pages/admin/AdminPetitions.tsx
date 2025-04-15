@@ -25,7 +25,7 @@ interface Petition {
 const petitions: Petition[] = [
   {
     id: "1",
-    petitionNumber: "PTN000012024",
+    petitionNumber: "PTN00001/2025",
     petitionerName: "Rajesh Kumar",
     date: "15-04-2024",
     status: "Pending",
@@ -34,7 +34,7 @@ const petitions: Petition[] = [
   },
   {
     id: "2",
-    petitionNumber: "PTN000022024",
+    petitionNumber: "PTN00002/2025",
     petitionerName: "Priya Sharma",
     date: "14-04-2024",
     status: "Assigned",
@@ -44,7 +44,7 @@ const petitions: Petition[] = [
   },
   {
     id: "3",
-    petitionNumber: "PTN000032024",
+    petitionNumber: "PTN00003/2025",
     petitionerName: "Suresh Reddy",
     date: "13-04-2024",
     status: "Under Investigation",
@@ -54,7 +54,7 @@ const petitions: Petition[] = [
   },
   {
     id: "4",
-    petitionNumber: "PTN000042024",
+    petitionNumber: "PTN00004/2025",
     petitionerName: "Lakshmi Devi",
     date: "12-04-2024",
     status: "Decision Made",

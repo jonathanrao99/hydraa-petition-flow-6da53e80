@@ -9,33 +9,33 @@ import PageHeader from "@/components/common/PageHeader";
 import StatusBadge from "@/components/common/StatusBadge";
 
 // Mock data - would be fetched from API in a real app
-const assignedPetitions = [
+const mockPetitions = [
   {
     id: "1",
-    petitionNumber: "PTN000012024",
+    petitionNumber: "PTN00001/2025",
     petitionerName: "Rajesh Kumar",
-    date: "15-04-2024",
-    status: "Assigned",
+    date: "15-04-2025",
+    status: "Assigned" as const,
     timeBound: "Priority",
-    dueDate: "20-04-2024"
+    dueDate: "20-04-2025"
   },
   {
     id: "2",
-    petitionNumber: "PTN000022024",
+    petitionNumber: "PTN00002/2025",
     petitionerName: "Priya Sharma",
-    date: "14-04-2024",
-    status: "Under Investigation",
+    date: "14-04-2025",
+    status: "Under Investigation" as const,
     timeBound: "Normal",
-    dueDate: "25-04-2024"
+    dueDate: "25-04-2025"
   },
   {
     id: "3",
-    petitionNumber: "PTN000032024",
+    petitionNumber: "PTN00003/2025",
     petitionerName: "Suresh Reddy",
-    date: "13-04-2024",
-    status: "Under Investigation",
+    date: "13-04-2025",
+    status: "Assigned" as const,
     timeBound: "Immediate",
-    dueDate: "18-04-2024"
+    dueDate: "18-04-2025"
   }
 ];
 
@@ -43,7 +43,7 @@ const AssignedPetitions = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
 
-  const filteredPetitions = assignedPetitions.filter(petition => {
+  const filteredPetitions = mockPetitions.filter(petition => {
     const matchesSearch = 
       petition.petitionNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
       petition.petitionerName.toLowerCase().includes(searchTerm.toLowerCase());

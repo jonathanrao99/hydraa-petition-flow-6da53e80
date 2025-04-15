@@ -12,28 +12,28 @@ import StatusBadge from "@/components/common/StatusBadge";
 const submissions = [
   {
     id: "1",
-    petitionNumber: "PTN000012024",
+    petitionNumber: "PTN00001/2025",
     petitionerName: "Rajesh Kumar",
-    submissionDate: "18-04-2024",
-    status: "Decision Made",
+    submissionDate: "18-04-2025",
+    status: "Decision Made" as const,
     recommendation: "Action Required",
     decision: "Approved"
   },
   {
     id: "2",
-    petitionNumber: "PTN000022024",
+    petitionNumber: "PTN00002/2025",
     petitionerName: "Priya Sharma",
-    submissionDate: "17-04-2024",
-    status: "Decision Made",
+    submissionDate: "17-04-2025",
+    status: "Decision Made" as const,
     recommendation: "No Action Required",
     decision: "Rejected"
   },
   {
     id: "3",
-    petitionNumber: "PTN000032024",
+    petitionNumber: "PTN00003/2025",
     petitionerName: "Suresh Reddy",
-    submissionDate: "16-04-2024",
-    status: "Under Review",
+    submissionDate: "16-04-2025",
+    status: "Under Investigation" as const,
     recommendation: "Action Required",
     decision: "Pending"
   }

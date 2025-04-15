@@ -12,7 +12,7 @@ import StatusBadge from "@/components/common/StatusBadge";
 const pendingDecisions = [
   {
     id: "1",
-    petitionNumber: "PTN000042024",
+    petitionNumber: "PTN00004/2025",
     petitionerName: "Lakshmi Devi",
     submissionDate: "18-04-2024",
     status: "Under Investigation",
@@ -22,7 +22,7 @@ const pendingDecisions = [
   },
   {
     id: "2",
-    petitionNumber: "PTN000052024",
+    petitionNumber: "PTN00005/2025",
     petitionerName: "Ravi Reddy",
     submissionDate: "17-04-2024",
     status: "Under Investigation",
@@ -32,7 +32,7 @@ const pendingDecisions = [
   },
   {
     id: "3",
-    petitionNumber: "PTN000062024",
+    petitionNumber: "PTN00006/2025",
     petitionerName: "Mohammed Ali",
     submissionDate: "16-04-2024",
     status: "Under Investigation",
