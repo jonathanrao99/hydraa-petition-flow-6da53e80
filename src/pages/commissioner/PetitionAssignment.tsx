@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -50,11 +50,16 @@ const petitionData = {
   assignedOfficers: [],
 };
 
+// Mock data for officer notifications
+let officerNotifications: Record<string, any[]> = {};
+
 const PetitionAssignment = () => {
+  const { id } = useParams();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [selectedOfficers, setSelectedOfficers] = useState<string[]>([]);
   const [instructions, setInstructions] = useState("");
+  const [timeBound, setTimeBound] = useState("Priority");
 
   const handleOfficerToggle = (officerId: string) => {
     if (selectedOfficers.includes(officerId)) {
@@ -82,6 +87,29 @@ const PetitionAssignment = () => {
       });
       return;
     }
+
+    // Create notification for each assigned officer
+    const notification = {
+      id: Date.now().toString(),
+      type: "petition_assigned",
+      petitionId: id,
+      petitionNumber: petitionData.petitionNumber,
+      petitionerName: petitionData.petitionerName,
+      timeBound,
+      instructions,
+      timestamp: new Date().toISOString(),
+    };
+
+    // Add notification to each officer's notification list
+    selectedOfficers.forEach(officerId => {
+      const officer = officers.find(o => o.id === officerId);
+      if (officer) {
+        if (!officerNotifications[officer.userId]) {
+          officerNotifications[officer.userId] = [];
+        }
+        officerNotifications[officer.userId].push(notification);
+      }
+    });
 
     // In a real app, this would send an API request to update the petition
     // and notify the assigned officers
@@ -118,61 +146,24 @@ const PetitionAssignment = () => {
               <h3 className="font-semibold">{petitionData.petitionNumber}</h3>
               <StatusBadge status={petitionData.status as any} />
             </div>
-            
             <div className="space-y-2">
-              <div className="grid grid-cols-2 gap-2">
-                <div className="text-sm text-muted-foreground">Date:</div>
-                <div>{petitionData.date}</div>
+              <div>
+                <span className="text-sm text-muted-foreground">Petitioner:</span>
+                <p className="font-medium">{petitionData.petitionerName}</p>
               </div>
-              <div className="grid grid-cols-2 gap-2">
-                <div className="text-sm text-muted-foreground">Petitioner:</div>
-                <div>{petitionData.petitionerName}</div>
+              <div>
+                <span className="text-sm text-muted-foreground">Date:</span>
+                <p className="font-medium">{petitionData.date}</p>
               </div>
-              <div className="grid grid-cols-2 gap-2">
-                <div className="text-sm text-muted-foreground">Contact:</div>
-                <div>{petitionData.petitionerPhone}</div>
+              <div>
+                <span className="text-sm text-muted-foreground">Type:</span>
+                <p className="font-medium">{petitionData.petitionType}</p>
               </div>
-              <div className="grid grid-cols-2 gap-2">
-                <div className="text-sm text-muted-foreground">Type:</div>
-                <div>{petitionData.petitionType}</div>
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                <div className="text-sm text-muted-foreground">Time Bound:</div>
-                <div>
-                  <span 
-                    className={`px-2 py-1 rounded-full text-xs ${
-                      petitionData.timeBound === "Priority" 
-                        ? "bg-red-100 text-red-800" 
-                        : petitionData.timeBound === "Immediate"
-                          ? "bg-orange-100 text-orange-800"
-                          : "bg-blue-100 text-blue-800"
-                    }`}
-                  >
-                    {petitionData.timeBound}
-                  </span>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                <div className="text-sm text-muted-foreground">Location:</div>
-                <div>
-                  {petitionData.encroachmentZone.level1}
-                  {petitionData.encroachmentZone.level2 && ` → ${petitionData.encroachmentZone.level2}`}
-                  {petitionData.encroachmentZone.level3 && ` → ${petitionData.encroachmentZone.level3}`}
-                </div>
-              </div>
-            </div>
-            
-            <div className="pt-2">
-              <Label>Complaint Details</Label>
-              <div className="rounded-md border p-3 mt-1">
-                {petitionData.complaintDetails}
-              </div>
-            </div>
-            
-            <div>
-              <Label>Initial Remark</Label>
-              <div className="rounded-md border p-3 mt-1">
-                {petitionData.initialRemark}
+              <div>
+                <span className="text-sm text-muted-foreground">Zone:</span>
+                <p className="font-medium">
+                  {petitionData.encroachmentZone.level3}, {petitionData.encroachmentZone.level2}
+                </p>
               </div>
             </div>
           </CardContent>
@@ -225,7 +216,7 @@ const PetitionAssignment = () => {
             
             <div className="space-y-2">
               <Label>Time Bound</Label>
-              <Select defaultValue={petitionData.timeBound}>
+              <Select value={timeBound} onValueChange={setTimeBound}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>

@@ -147,6 +147,12 @@ const AppShell = ({ children }: AppShellProps) => {
             title: "Final Decisions",
             tooltip: "View and make final decisions on petitions" 
           },
+          { 
+            href: "/commissioner/review-decisions", 
+            icon: FileText, 
+            title: "Review Decisions",
+            tooltip: "Review and track all decisions made on petitions" 
+          },
         ];
       case "Admin":
         return [

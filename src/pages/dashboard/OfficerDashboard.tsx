@@ -1,43 +1,159 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FileText, Clock, CheckCircle, AlertTriangle } from "lucide-react";
+import { FileText, Clock, CheckCircle, AlertTriangle, Bell, Search } from "lucide-react";
 import PageHeader from "@/components/common/PageHeader";
 import StatCard from "@/components/common/StatCard";
 import StatusBadge from "@/components/common/StatusBadge";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
+import NotificationService from "@/services/notificationService";
 
-// Mock data - would be fetched from API in a real app
-const assignedPetitions = [
+// Define the Petition type
+type Petition = {
+  id: string;
+  petitionNumber: string;
+  petitionerName: string;
+  petitionerPhone: string;
+  petitionerAddress: string;
+  type: string;
+  zone: string;
+  subject: string;
+  complaintDetails: string;
+  respondentName: string;
+  respondentAddress: string;
+  respondentPhone: string;
+  encroachmentAddress: string;
+  initialRemark: string;
+  investigationReport: string;
+  officerRecommendation: string;
+  finalDecision: string;
+  decisionStatus: string;
+  submissionDate: string;
+  assignedDate: string;
+  timeBound: string;
+  instructions: string;
+};
+
+// Mock data for assigned petitions
+const mockAssignedPetitions: Petition[] = [
   {
     id: "1",
     petitionNumber: "PTN00001/2025",
     petitionerName: "Rajesh Kumar",
-    date: "15-04-2024",
-    status: "Assigned",
+    petitionerPhone: "9876543210",
+    petitionerAddress: "4-5-6, Banjara Hills, Hyderabad",
+    type: "General",
+    zone: "Gachibowli, West",
+    subject: "Encroachment of public road",
+    complaintDetails: "Encroachment of public road by neighboring property owner, causing traffic issues and blocking access to my property.",
+    respondentName: "Venkat",
+    respondentAddress: "4-5-7, Banjara Hills, Hyderabad",
+    respondentPhone: "9876543211",
+    encroachmentAddress: "4-5-7, Banjara Hills, Hyderabad",
+    initialRemark: "Petitioner has provided photographic evidence of encroachment.",
+    investigationReport: "",
+    officerRecommendation: "",
+    finalDecision: "",
+    decisionStatus: "Under Investigation",
+    submissionDate: "15-04-2024",
+    assignedDate: "16-04-2024",
     timeBound: "Priority",
+    instructions: "Please investigate the encroachment and submit a detailed report with photographic evidence.",
   },
   {
     id: "2",
     petitionNumber: "PTN00002/2025",
     petitionerName: "Priya Sharma",
-    date: "14-04-2024",
-    status: "Under Investigation",
-    timeBound: "Normal",
-  },
-  {
-    id: "3",
-    petitionNumber: "PTN00003/2025",
-    petitionerName: "Suresh Reddy",
-    date: "13-04-2024",
-    status: "Under Investigation",
+    petitionerPhone: "9876543212",
+    petitionerAddress: "7-8-9, Jubilee Hills, Hyderabad",
+    type: "Noise Complaint",
+    zone: "Jubilee Hills, West",
+    subject: "Excessive noise from construction site",
+    complaintDetails: "Construction work is being carried out beyond permitted hours, causing disturbance to residents.",
+    respondentName: "ABC Construction",
+    respondentAddress: "7-8-10, Jubilee Hills, Hyderabad",
+    respondentPhone: "9876543213",
+    encroachmentAddress: "7-8-10, Jubilee Hills, Hyderabad",
+    initialRemark: "Multiple complaints received from residents in the area.",
+    investigationReport: "",
+    officerRecommendation: "",
+    finalDecision: "",
+    decisionStatus: "Under Investigation",
+    submissionDate: "16-04-2024",
+    assignedDate: "17-04-2024",
     timeBound: "Immediate",
+    instructions: "Visit the site during evening hours and verify the complaint. Check for any permits and their validity.",
   },
 ];
 
 const OfficerDashboard = () => {
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("overview");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const [assignedPetitions, setAssignedPetitions] = useState<Petition[]>(mockAssignedPetitions);
+
+  // Mock current officer ID - in a real app, this would come from authentication
+  const currentOfficerId = "Jane/ACP";
+
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      const notificationService = NotificationService.getInstance();
+      const userNotifications = notificationService.getNotifications(currentOfficerId);
+      setNotifications(userNotifications);
+    };
+
+    fetchNotifications();
+  }, []);
+
+  const handleNotificationClick = async (notification: any) => {
+    const notificationService = NotificationService.getInstance();
+    notificationService.markAsRead(notification.id, currentOfficerId);
+    setNotifications(notifications.filter(n => n.id !== notification.id));
+    toast({
+      title: "Notification",
+      description: `Petition ${notification.petitionNumber} assigned to you`,
+    });
+  };
+
+  const handleSubmitReport = async (petition: Petition) => {
+    const notificationService = NotificationService.getInstance();
+    
+    // Send notification about investigation completion
+    await notificationService.sendNotification({
+      type: "investigation_completed",
+      priority: "high",
+      title: "Investigation Report Submitted",
+      message: `Investigation report has been submitted for petition ${petition.petitionNumber}`,
+      petitionId: petition.id,
+      petitionNumber: petition.petitionNumber,
+      recipients: [
+        {
+          userId: "commissioner",
+          email: "commissioner@hydraa.gov",
+          name: "Commissioner",
+        },
+      ],
+    });
+
+    toast({
+      title: "Report Submitted",
+      description: "Your investigation report has been submitted successfully",
+    });
+  };
+
+  const filteredPetitions = assignedPetitions.filter(petition => {
+    const searchLower = searchTerm.toLowerCase();
+    return (
+      petition.petitionNumber.toLowerCase().includes(searchLower) ||
+      petition.petitionerName.toLowerCase().includes(searchLower) ||
+      petition.subject.toLowerCase().includes(searchLower)
+    );
+  });
 
   return (
     <div className="space-y-6">
@@ -45,6 +161,56 @@ const OfficerDashboard = () => {
         title="Enquiry Officer Dashboard"
         description="View and respond to assigned petitions"
       />
+
+      <div className="flex justify-between items-center">
+        <h1 className="text-3xl font-bold">Officer Dashboard</h1>
+        <div className="relative">
+          <Button variant="outline" size="icon" className="relative">
+            <Bell className="h-5 w-5" />
+            {notifications.length > 0 && (
+              <Badge className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center">
+                {notifications.length}
+              </Badge>
+            )}
+          </Button>
+          {notifications.length > 0 && (
+            <div className="absolute right-0 mt-2 w-80 bg-white rounded-md shadow-lg p-2 z-10">
+              {notifications.map(notification => (
+                <div
+                  key={notification.id}
+                  className="p-2 hover:bg-gray-100 rounded-md cursor-pointer"
+                  onClick={() => handleNotificationClick(notification)}
+                >
+                  <div className="flex justify-between items-start">
+                    <div className="font-medium">{notification.petitionNumber}</div>
+                    <Badge variant={notification.timeBound === "Priority" ? "destructive" : "default"}>
+                      {notification.timeBound}
+                    </Badge>
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    {notification.petitionerName}
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-1">
+                    {new Date(notification.timestamp).toLocaleString()}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="flex items-center space-x-2">
+        <div className="relative flex-1">
+          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search petitions..."
+            className="pl-8"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+      </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <StatCard
@@ -100,7 +266,7 @@ const OfficerDashboard = () => {
                         <div key={petition.id} className="grid grid-cols-1 md:grid-cols-5 p-3 items-center">
                           <div className="font-medium">{petition.petitionNumber}</div>
                           <div>{petition.petitionerName}</div>
-                          <div>{petition.date}</div>
+                          <div>{petition.submissionDate}</div>
                           <div>
                             <span 
                               className={`px-2 py-1 rounded-full text-xs ${
@@ -146,11 +312,11 @@ const OfficerDashboard = () => {
                         <div className="space-y-2">
                           <div className="flex items-center justify-between">
                             <span className="text-sm font-medium">{petition.petitionNumber}</span>
-                            <StatusBadge status={petition.status as any} />
+                            <StatusBadge status={petition.decisionStatus as any} />
                           </div>
                           <div className="text-sm">{petition.petitionerName}</div>
                           <div className="text-xs text-muted-foreground">
-                            {petition.date} • {petition.timeBound}
+                            {petition.submissionDate} • {petition.timeBound}
                           </div>
                           <div className="pt-2">
                             <Link to={`/officer/assigned/${petition.id}`}>
@@ -184,13 +350,13 @@ const OfficerDashboard = () => {
                   <div className="text-right">Actions</div>
                 </div>
                 <div className="divide-y">
-                  {assignedPetitions.map((petition) => (
+                  {filteredPetitions.map((petition) => (
                     <div key={petition.id} className="grid grid-cols-1 md:grid-cols-6 p-3 items-center">
                       <div className="font-medium">{petition.petitionNumber}</div>
                       <div>{petition.petitionerName}</div>
-                      <div>{petition.date}</div>
+                      <div>{petition.submissionDate}</div>
                       <div>
-                        <StatusBadge status={petition.status as any} />
+                        <StatusBadge status={petition.decisionStatus as any} />
                       </div>
                       <div>
                         <span 
@@ -220,6 +386,50 @@ const OfficerDashboard = () => {
           </Card>
         </TabsContent>
       </Tabs>
+
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {filteredPetitions.map((petition) => (
+          <Card key={petition.id}>
+            <CardHeader>
+              <CardTitle className="flex justify-between items-center">
+                <span>{petition.petitionNumber}</span>
+                <StatusBadge status={petition.decisionStatus as any} />
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <div>
+                  <span className="text-sm text-muted-foreground">Petitioner:</span>
+                  <p className="font-medium">{petition.petitionerName}</p>
+                </div>
+                <div>
+                  <span className="text-sm text-muted-foreground">Subject:</span>
+                  <p className="font-medium">{petition.subject}</p>
+                </div>
+                <div>
+                  <span className="text-sm text-muted-foreground">Zone:</span>
+                  <p className="font-medium">{petition.zone}</p>
+                </div>
+                <div>
+                  <span className="text-sm text-muted-foreground">Time Bound:</span>
+                  <Badge variant={petition.timeBound === "Priority" ? "destructive" : "default"}>
+                    {petition.timeBound}
+                  </Badge>
+                </div>
+              </div>
+              <div className="flex justify-between">
+                <Button variant="outline" size="sm">
+                  <FileText className="mr-2 h-4 w-4" />
+                  View Details
+                </Button>
+                <Button size="sm" onClick={() => handleSubmitReport(petition)}>
+                  Submit Report
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,6 +7,7 @@ import { FileText, Clock, CheckCircle, UserCheck } from "lucide-react";
 import PageHeader from "@/components/common/PageHeader";
 import StatCard from "@/components/common/StatCard";
 import StatusBadge from "@/components/common/StatusBadge";
+import { reviewDecisions } from "@/pages/commissioner/ReviewDecisions";
 
 // Mock data - would be fetched from API in a real app
 const pendingPetitions = [
@@ -59,25 +60,51 @@ const assignedPetitions = [
 
 const decidedPetitions = [
   {
-    id: "6",
-    petitionNumber: "PTN00006/2025",
-    petitionerName: "Sanjay Kumar",
-    date: "10-04-2024",
-    status: "Decision Made",
-    decision: "Approved",
+    id: "1",
+    petitionNumber: "PTN00001/2025",
+    petitionerName: "Lakshmi Devi",
+    submissionDate: "12-04-2024",
+    decisionDate: "18-04-2024",
+    status: "Decision Made" as const,
+    decisionStatus: "Approved",
+    finalDecision: "After careful consideration, the petition is approved. The respondent is ordered to remove the encroachment within 15 days.",
+    type: "Road Encroachment",
+    zone: "Hyderabad West - Gachibowli"
   },
   {
-    id: "7",
-    petitionNumber: "PTN00007/2025",
-    petitionerName: "Meena Devi",
-    date: "09-04-2024",
-    status: "Decision Made",
-    decision: "Rejected",
+    id: "2",
+    petitionNumber: "PTN00002/2025",
+    petitionerName: "Ravi Reddy",
+    submissionDate: "11-04-2024",
+    decisionDate: "17-04-2024",
+    status: "Decision Made" as const,
+    decisionStatus: "Denied",
+    finalDecision: "Based on the investigation report, the petition is denied as the complaint was found to be invalid.",
+    type: "Footpath Encroachment",
+    zone: "Hyderabad East - Uppal"
   },
+  {
+    id: "3",
+    petitionNumber: "PTN00003/2025",
+    petitionerName: "Mohammed Ali",
+    submissionDate: "10-04-2024",
+    decisionDate: "16-04-2024",
+    status: "Decision Made" as const,
+    decisionStatus: "Partially Approved",
+    finalDecision: "The petition is partially approved. The respondent must remove the encroachment but is granted a 30-day extension.",
+    type: "Public Land Encroachment",
+    zone: "Hyderabad Central - Begumpet"
+  }
 ];
 
 const CommissionerDashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
+  const [decidedPetitions, setDecidedPetitions] = useState(reviewDecisions);
+
+  useEffect(() => {
+    // Update local state when reviewDecisions changes
+    setDecidedPetitions(reviewDecisions);
+  }, [reviewDecisions]);
 
   return (
     <div className="space-y-6">
@@ -126,6 +153,7 @@ const CommissionerDashboard = () => {
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="pending">Pending Assignment</TabsTrigger>
           <TabsTrigger value="assigned">Under Investigation</TabsTrigger>
+          <TabsTrigger value="decided">Decisions Made</TabsTrigger>
         </TabsList>
         <TabsContent value="overview" className="space-y-4">
           <Card>
@@ -301,6 +329,57 @@ const CommissionerDashboard = () => {
                         <Link to={`/commissioner/assigned/${petition.id}`}>
                           <Button variant="outline" size="sm">
                             View
+                          </Button>
+                        </Link>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        <TabsContent value="decided" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Decided Petitions</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="rounded-md border">
+                <div className="grid grid-cols-1 md:grid-cols-6 p-3 font-medium">
+                  <div>Petition Number</div>
+                  <div>Petitioner</div>
+                  <div>Decision Date</div>
+                  <div>Status</div>
+                  <div>Decision</div>
+                  <div className="text-right">Actions</div>
+                </div>
+                <div className="divide-y">
+                  {decidedPetitions.map((petition) => (
+                    <div key={petition.id} className="grid grid-cols-1 md:grid-cols-6 p-3 items-center">
+                      <div className="font-medium">{petition.petitionNumber}</div>
+                      <div>{petition.petitionerName}</div>
+                      <div>{petition.decisionDate}</div>
+                      <div>
+                        <StatusBadge status={petition.status as any} />
+                      </div>
+                      <div>
+                        <span 
+                          className={`px-2 py-1 rounded-full text-xs ${
+                            petition.decisionStatus === "Approved" 
+                              ? "bg-green-100 text-green-800" 
+                              : petition.decisionStatus === "Denied"
+                                ? "bg-red-100 text-red-800"
+                                : "bg-blue-100 text-blue-800"
+                          }`}
+                        >
+                          {petition.decisionStatus}
+                        </span>
+                      </div>
+                      <div className="flex justify-end">
+                        <Link to={`/commissioner/review-decisions/${petition.id}?readonly=true`}>
+                          <Button variant="outline" size="sm">
+                            View Details
                           </Button>
                         </Link>
                       </div>

@@ -1,118 +1,145 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { ArrowLeft, Save } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle, CheckCircle2, XCircle, Clock, Loader2 } from "lucide-react";
 import PageHeader from "@/components/common/PageHeader";
 import StatusBadge from "@/components/common/StatusBadge";
 
-// Mock data - would be fetched from API in a real app
-const mockPetitions = [
-  {
-    id: "1",
-    petitionNumber: "PTN00004/2025",
-    petitionerName: "Lakshmi Devi",
-    petitionerPhone: "9876543210",
-    petitionerAddress: "123, Main Street, Hyderabad",
-    date: "12-04-2024",
-    status: "Under Investigation" as const,
-    type: "Road Encroachment",
-    zone: "Hyderabad West - Gachibowli",
-    subject: "Illegal construction on public road",
-    complaintDetails: "The respondent has constructed a temporary structure on the public road, causing inconvenience to pedestrians and vehicles.",
-    respondentName: "Ramesh Kumar",
-    respondentAddress: "456, Market Street, Hyderabad",
-    respondentPhone: "9876543211",
-    encroachmentAddress: "Near Gachibowli Circle",
-    initialRemark: "Need immediate attention due to traffic congestion",
-    timeBound: "Priority",
-    assignedOfficers: ["Jane Smith", "Rao Kumar"],
-    investigationReport: "Site visit conducted on 15-04-2024. Found temporary structure measuring 10x15 feet. Photos and measurements taken. Local residents interviewed.",
-    officerRecommendation: "Recommend immediate removal of the structure as it violates public space regulations.",
-    evidence: [
-      {
-        type: "Photo",
-        description: "Front view of the encroachment",
-        date: "15-04-2024",
-        uploadedBy: "Jane Smith"
-      },
-      {
-        type: "Photo",
-        description: "Side view showing obstruction",
-        date: "15-04-2024",
-        uploadedBy: "Jane Smith"
-      },
-      {
-        type: "Measurement",
-        description: "Structure dimensions",
-        date: "15-04-2024",
-        uploadedBy: "Rao Kumar"
-      },
-      {
-        type: "Witness Statement",
-        description: "Local resident interview",
-        date: "15-04-2024",
-        uploadedBy: "Jane Smith"
-      }
-    ]
-  },
-  {
-    id: "2",
-    petitionNumber: "PTN00005/2025",
-    petitionerName: "Ravi Reddy",
-    petitionerPhone: "9876543212",
-    petitionerAddress: "789, Park Avenue, Hyderabad",
-    date: "11-04-2024",
-    status: "Under Investigation" as const,
-    type: "Footpath Encroachment",
-    zone: "Hyderabad East - Uppal",
-    subject: "Vendors occupying footpath",
-    complaintDetails: "Multiple street vendors have set up permanent stalls on the footpath, making it difficult for pedestrians to walk.",
-    respondentName: "Multiple vendors",
-    respondentAddress: "Uppal Main Road",
-    respondentPhone: "N/A",
-    encroachmentAddress: "Uppal Main Road footpath",
-    initialRemark: "Need to verify vendor licenses and permissions",
-    investigationReport: "Initial site visit completed. Found 8 unauthorized stalls. Documentation in progress.",
-    officerRecommendation: "Pending",
-    assignedOfficers: ["Jane Smith", "Rao Kumar", "Anjali Sharma"],
-    evidence: []
-  },
-  {
-    id: "3",
-    petitionNumber: "PTN00006/2025",
-    petitionerName: "Mohammed Ali",
-    petitionerPhone: "9876543213",
-    petitionerAddress: "321, Lake View, Hyderabad",
-    date: "10-04-2024",
-    status: "Under Investigation" as const,
-    type: "Public Land Encroachment",
-    zone: "Hyderabad Central - Begumpet",
-    subject: "Illegal parking on public land",
-    complaintDetails: "A private parking lot is operating on public land without proper authorization.",
-    respondentName: "City Parking Solutions",
-    respondentAddress: "Begumpet Main Road",
-    respondentPhone: "9876543214",
-    encroachmentAddress: "Plot No. 45, Begumpet",
-    initialRemark: "High priority due to revenue loss",
-    investigationReport: "Complete investigation done. Found unauthorized parking operations. Revenue records collected. Final report being prepared.",
-    officerRecommendation: "Recommend legal action and recovery of unauthorized earnings",
-    assignedOfficers: ["Anjali Sharma"],
-    evidence: []
-  }
-];
+type PetitionStatus = "Pending" | "Under Investigation" | "Decision Made" | "Approved" | "Denied" | "Partially Approved" | "Closed";
+type DecisionStatus = "Approved" | "Denied" | "Partially Approved" | "Pending";
+
+interface Petition {
+  id: string;
+  petitionNumber: string;
+  petitionerName: string;
+  petitionerPhone: string;
+  petitionerAddress: string;
+  submissionDate: string;
+  status: PetitionStatus;
+  type: string;
+  zone: string;
+  subject: string;
+  complaintDetails: string;
+  respondentName: string;
+  respondentAddress: string;
+  respondentPhone: string;
+  encroachmentAddress: string;
+  initialRemark: string;
+  investigationReport: string;
+  officerRecommendation: string;
+  finalDecision: string;
+  decisionStatus: DecisionStatus;
+  evidence: string[];
+  decisionDate?: string;
+}
 
 const DecisionReview = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [remarks, setRemarks] = useState("");
   const [decision, setDecision] = useState("");
+  const [decisionStatus, setDecisionStatus] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
+  const [isReadOnly, setIsReadOnly] = useState(false);
+  const [petitionData, setPetitionData] = useState<Petition | null>(null);
+  const [reviewDecisions, setReviewDecisions] = useState<Petition[]>([]);
+  const [pendingDecisions, setPendingDecisions] = useState<Petition[]>([]);
 
-  // Find the petition data based on the ID from the URL
-  const petitionData = mockPetitions.find(petition => petition.id === id);
+  // Check if this is a view-only mode (accessed from Review Decisions page)
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const isReadOnlyMode = searchParams.get('readonly') === 'true';
+    setIsReadOnly(isReadOnlyMode);
+    
+    // In a real app, this would be an API call to fetch the petition data
+    // For now, we'll use the mock data based on the ID
+    if (id) {
+      const mockPetitions: Petition[] = [
+        {
+          id: "1",
+          petitionNumber: "PTN00001/2025",
+          petitionerName: "John Doe",
+          petitionerPhone: "1234567890",
+          petitionerAddress: "123 Main St",
+          submissionDate: "2025-01-15",
+          status: "Decision Made" as PetitionStatus,
+          type: "Encroachment",
+          zone: "Zone A",
+          subject: "Illegal Construction",
+          complaintDetails: "Neighbor has built an extension without permission",
+          respondentName: "Jane Smith",
+          respondentAddress: "124 Main St",
+          respondentPhone: "0987654321",
+          encroachmentAddress: "124 Main St",
+          initialRemark: "Initial assessment completed",
+          investigationReport: "Investigation found unauthorized construction",
+          officerRecommendation: "Recommend removal of unauthorized structure",
+          finalDecision: "Approved for removal",
+          decisionStatus: "Approved",
+          evidence: []
+        },
+        {
+          id: "2",
+          petitionNumber: "PTN00002/2025",
+          petitionerName: "Alice Johnson",
+          petitionerPhone: "2345678901",
+          petitionerAddress: "456 Oak Ave",
+          submissionDate: "2025-01-16",
+          status: "Under Investigation" as PetitionStatus,
+          type: "Noise Complaint",
+          zone: "Zone B",
+          subject: "Excessive Noise",
+          complaintDetails: "Loud music playing late at night",
+          respondentName: "Bob Wilson",
+          respondentAddress: "458 Oak Ave",
+          respondentPhone: "9876543210",
+          encroachmentAddress: "458 Oak Ave",
+          initialRemark: "Noise levels being monitored",
+          investigationReport: "Ongoing investigation",
+          officerRecommendation: "Pending",
+          finalDecision: "Pending",
+          decisionStatus: "Pending",
+          evidence: []
+        },
+        {
+          id: "3",
+          petitionNumber: "PTN00003/2025",
+          petitionerName: "Charlie Brown",
+          petitionerPhone: "3456789012",
+          petitionerAddress: "789 Pine St",
+          submissionDate: "2025-01-17",
+          status: "Decision Made" as PetitionStatus,
+          type: "Property Dispute",
+          zone: "Zone C",
+          subject: "Boundary Issue",
+          complaintDetails: "Neighbor's fence encroaching on property",
+          respondentName: "David Miller",
+          respondentAddress: "791 Pine St",
+          respondentPhone: "8765432109",
+          encroachmentAddress: "791 Pine St",
+          initialRemark: "Boundary survey required",
+          investigationReport: "Survey shows 2 feet encroachment",
+          officerRecommendation: "Recommend partial removal",
+          finalDecision: "Partially approved - adjust fence line",
+          decisionStatus: "Partially Approved",
+          evidence: []
+        }
+      ];
+
+      const foundPetition = mockPetitions.find(p => p.id === id);
+      if (foundPetition) {
+        setPetitionData(foundPetition);
+        if (isReadOnlyMode) {
+          setDecision(foundPetition.finalDecision);
+          setDecisionStatus(foundPetition.decisionStatus);
+        }
+      }
+    }
+  }, [id]);
 
   if (!petitionData) {
     return (
@@ -125,205 +152,280 @@ const DecisionReview = () => {
     );
   }
 
-  const handleSubmitDecision = () => {
-    // Here you would typically make an API call to save the decision
-    console.log({
-      petitionId: id,
-      remarks,
-      decision
-    });
-    navigate("/commissioner/decisions");
+  const handleSubmitDecision = async () => {
+    if (!decision || !decisionStatus) {
+      setError("Please provide both a decision and select a status");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setError("");
+
+    try {
+      // In a real app, this would be an API call
+      console.log("Submitting decision:", {
+        petitionId: id,
+        decision,
+        decisionStatus
+      });
+
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Update the petition status in the dashboard
+      // In a real app, this would update the backend state
+      const updatedPetition: Petition = {
+        ...petitionData!,
+        status: "Decision Made",
+        finalDecision: decision,
+        decisionStatus: decisionStatus as DecisionStatus,
+        decisionDate: new Date().toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric' })
+      };
+
+      // Add to review decisions list
+      setReviewDecisions([...reviewDecisions, updatedPetition]);
+
+      // Remove from pending decisions
+      const index = pendingDecisions.findIndex(p => p.id === id);
+      if (index !== -1) {
+        const newPendingDecisions = pendingDecisions.filter((_, i) => i !== index);
+        setPendingDecisions(newPendingDecisions);
+      }
+
+      // Navigate back to decisions page
+      navigate("/commissioner/decisions", { replace: true });
+    } catch (err) {
+      setError("Failed to submit decision. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case "Approved":
+        return <CheckCircle2 className="h-4 w-4 text-green-500" />;
+      case "Denied":
+        return <XCircle className="h-4 w-4 text-red-500" />;
+      case "Partially Approved":
+        return <Clock className="h-4 w-4 text-blue-500" />;
+      default:
+        return <AlertCircle className="h-4 w-4 text-gray-500" />;
+    }
+  };
+
+  const getDecisionStatusColor = (status: string) => {
+    switch (status) {
+      case "Approved":
+        return "text-green-500";
+      case "Denied":
+        return "text-red-500";
+      case "Partially Approved":
+        return "text-blue-500";
+      default:
+        return "text-gray-500";
+    }
   };
 
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Review Petition"
-        description="Review all collected information and make a final decision"
-        action={
-          <Button variant="outline" onClick={() => navigate("/commissioner/decisions")}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back
-          </Button>
-        }
+        title={isReadOnly ? "View Decision" : "Review Petition"}
+        description={isReadOnly ? "View the final decision made on this petition" : "Review the petition details and make a final decision"}
       />
 
+      {error && (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+
       <div className="grid gap-6 md:grid-cols-2">
-        {/* Petition Details */}
         <Card>
           <CardHeader>
             <CardTitle>Petition Details</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex justify-between items-center">
-              <h3 className="font-semibold">{petitionData.petitionNumber}</h3>
-              <StatusBadge status={petitionData.status} />
-            </div>
-            <div className="grid gap-4">
+            <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label className="text-muted-foreground">Type</Label>
-                <p>{petitionData.type}</p>
+                <p className="text-sm text-muted-foreground">Petition Number</p>
+                <p className="font-medium">{petitionData.petitionNumber}</p>
               </div>
               <div>
-                <Label className="text-muted-foreground">Zone</Label>
-                <p>{petitionData.zone}</p>
+                <p className="text-sm text-muted-foreground">Submission Date</p>
+                <p className="font-medium">{petitionData.submissionDate}</p>
               </div>
               <div>
-                <Label className="text-muted-foreground">Subject</Label>
-                <p>{petitionData.subject}</p>
+                <p className="text-sm text-muted-foreground">Type</p>
+                <p className="font-medium">{petitionData.type}</p>
               </div>
               <div>
-                <Label className="text-muted-foreground">Complaint Details</Label>
-                <p>{petitionData.complaintDetails}</p>
-              </div>
-              <div>
-                <Label className="text-muted-foreground">Initial Remark</Label>
-                <p>{petitionData.initialRemark}</p>
+                <p className="text-sm text-muted-foreground">Zone</p>
+                <p className="font-medium">{petitionData.zone}</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Petitioner & Respondent Details */}
         <Card>
           <CardHeader>
-            <CardTitle>Contact Information</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div>
-              <h4 className="font-medium mb-2">Petitioner</h4>
-              <div className="space-y-2">
-                <p>{petitionData.petitionerName}</p>
-                <p>{petitionData.petitionerPhone}</p>
-                <p>{petitionData.petitionerAddress}</p>
-              </div>
-            </div>
-            <div>
-              <h4 className="font-medium mb-2">Respondent</h4>
-              <div className="space-y-2">
-                <p>{petitionData.respondentName}</p>
-                <p>{petitionData.respondentPhone}</p>
-                <p>{petitionData.respondentAddress}</p>
-              </div>
-            </div>
-            <div>
-              <h4 className="font-medium mb-2">Encroachment Location</h4>
-              <p>{petitionData.encroachmentAddress}</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Investigation Details */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Investigation Details</CardTitle>
+            <CardTitle>Petitioner Details</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label className="text-muted-foreground">Assigned Officers</Label>
-              <div className="flex flex-wrap gap-1 mt-1">
-                {petitionData.assignedOfficers.map((officer, index) => (
-                  <span
-                    key={index}
-                    className="inline-flex items-center rounded-full bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10"
-                  >
-                    {officer}
-                  </span>
-                ))}
-              </div>
+              <p className="text-sm text-muted-foreground">Name</p>
+              <p className="font-medium">{petitionData.petitionerName}</p>
             </div>
             <div>
-              <Label className="text-muted-foreground">Investigation Report</Label>
-              <p className="mt-1">{petitionData.investigationReport}</p>
+              <p className="text-sm text-muted-foreground">Phone</p>
+              <p className="font-medium">{petitionData.petitionerPhone}</p>
             </div>
             <div>
-              <Label className="text-muted-foreground">Officer Recommendation</Label>
-              <p className="mt-1">{petitionData.officerRecommendation}</p>
+              <p className="text-sm text-muted-foreground">Address</p>
+              <p className="font-medium">{petitionData.petitionerAddress}</p>
             </div>
           </CardContent>
         </Card>
 
-        {/* Evidence */}
-        {petitionData.evidence.length > 0 && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Evidence</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {petitionData.evidence.map((item, index) => (
-                  <div key={index} className="border rounded-lg p-4">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h4 className="font-medium">{item.type}</h4>
-                        <p className="text-sm text-muted-foreground">{item.description}</p>
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        {item.date} • {item.uploadedBy}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
+        <Card>
+          <CardHeader>
+            <CardTitle>Complaint Details</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <p className="text-sm text-muted-foreground">Subject</p>
+              <p className="font-medium">{petitionData.subject}</p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Details</p>
+              <p className="font-medium">{petitionData.complaintDetails}</p>
+            </div>
+          </CardContent>
+        </Card>
 
-        {/* Commissioner's Decision */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Respondent Details</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <p className="text-sm text-muted-foreground">Name</p>
+              <p className="font-medium">{petitionData.respondentName}</p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Phone</p>
+              <p className="font-medium">{petitionData.respondentPhone}</p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Address</p>
+              <p className="font-medium">{petitionData.respondentAddress}</p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Encroachment Location</p>
+              <p className="font-medium">{petitionData.encroachmentAddress}</p>
+            </div>
+          </CardContent>
+        </Card>
+
         <Card className="md:col-span-2">
           <CardHeader>
-            <CardTitle>Make Decision</CardTitle>
+            <CardTitle>Investigation Report</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <p className="text-sm text-muted-foreground">Initial Remark</p>
+              <p className="font-medium">{petitionData.initialRemark}</p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Investigation Details</p>
+              <p className="font-medium">{petitionData.investigationReport}</p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Officer Recommendation</p>
+              <p className="font-medium">{petitionData.officerRecommendation}</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="md:col-span-2">
+          <CardHeader>
+            <CardTitle>{isReadOnly ? "Decision Details" : "Make Decision"}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label>Remarks</Label>
-              <Textarea
-                placeholder="Enter any additional remarks or observations..."
-                value={remarks}
-                onChange={(e) => setRemarks(e.target.value)}
-                rows={4}
-              />
+              <label className="text-sm font-medium">Decision Status</label>
+              {isReadOnly ? (
+                <div className="flex items-center gap-2">
+                  {getStatusIcon(decisionStatus)}
+                  <span className={`font-medium ${getDecisionStatusColor(decisionStatus)} px-2 py-1 rounded-full`}>
+                    {decisionStatus}
+                  </span>
+                </div>
+              ) : (
+                <Select
+                  value={decisionStatus}
+                  onValueChange={setDecisionStatus}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select decision status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Approved">
+                      <div className="flex items-center gap-2">
+                        {getStatusIcon("Approved")}
+                        <span>Approved</span>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="Denied">
+                      <div className="flex items-center gap-2">
+                        {getStatusIcon("Denied")}
+                        <span>Denied</span>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="Partially Approved">
+                      <div className="flex items-center gap-2">
+                        {getStatusIcon("Partially Approved")}
+                        <span>Partially Approved</span>
+                      </div>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
             </div>
-            
             <div className="space-y-2">
-              <Label>Decision</Label>
-              <RadioGroup value={decision} onValueChange={setDecision}>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="approved" id="approved" />
-                  <Label htmlFor="approved" className="font-normal">Approve</Label>
+              <label className="text-sm font-medium">Commissioner Remarks</label>
+              {isReadOnly ? (
+                <div className="p-3 bg-muted rounded-md">
+                  <p className="text-sm">{decision}</p>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="denied" id="denied" />
-                  <Label htmlFor="denied" className="font-normal">Deny</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="partially_approved" id="partially_approved" />
-                  <Label htmlFor="partially_approved" className="font-normal">Partially Approve</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="invalid" id="invalid" />
-                  <Label htmlFor="invalid" className="font-normal">Mark as Invalid</Label>
-                </div>
-              </RadioGroup>
+              ) : (
+                <Textarea
+                  placeholder="Enter your remarks..."
+                  value={decision}
+                  onChange={(e) => setDecision(e.target.value)}
+                  className="min-h-[100px]"
+                />
+              )}
             </div>
-
-            <div className="flex gap-4 pt-4">
-              <Button 
-                variant="outline" 
-                className="w-full"
-                onClick={() => navigate("/commissioner/decisions")}
-              >
-                Cancel
-              </Button>
-              <Button 
-                className="w-full" 
-                onClick={handleSubmitDecision}
-                disabled={!decision}
-              >
-                <Save className="mr-2 h-4 w-4" />
-                Submit Decision
-              </Button>
-            </div>
+            {!isReadOnly && (
+              <div className="flex justify-end gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => navigate("/commissioner/decisions")}
+                  disabled={isSubmitting}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleSubmitDecision}
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Submitting..." : "Submit Decision"}
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

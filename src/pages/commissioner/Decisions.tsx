@@ -147,11 +147,11 @@ const Decisions = () => {
                     </div>
                     <div className="flex justify-end">
                       <Button 
-                        variant="outline" 
+                        variant="default" 
                         size="sm"
-                        onClick={() => handleReviewClick(petition.id)}
+                        onClick={() => navigate(`/commissioner/decisions/${petition.id}/review`)}
                       >
-                        Review
+                        Make Decision
                       </Button>
                     </div>
                   </div>

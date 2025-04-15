@@ -24,6 +24,9 @@ import AdminPetitions from "@/pages/admin/AdminPetitions";
 import SystemSettings from "@/pages/admin/SystemSettings";
 import NotFound from "@/pages/NotFound";
 import PendingPetitions from "@/pages/commissioner/PendingPetitions";
+import DecidedPetitions from "@/pages/commissioner/DecidedPetitions";
+import ReviewDecisions from "@/pages/commissioner/ReviewDecisions";
+import { FileText } from "lucide-react";
 
 const queryClient = new QueryClient();
 
@@ -203,6 +206,33 @@ const AppRoutes = () => {
       />
       <Route
         path="/commissioner/decisions/:id/review"
+        element={
+          <ProtectedRoute
+            element={<AppShell><DecisionReview /></AppShell>}
+            allowedRoles={["HOD", "Admin"]}
+          />
+        }
+      />
+      <Route
+        path="/commissioner/decided"
+        element={
+          <ProtectedRoute
+            element={<AppShell><DecidedPetitions /></AppShell>}
+            allowedRoles={["HOD", "Admin"]}
+          />
+        }
+      />
+      <Route
+        path="/commissioner/review-decisions"
+        element={
+          <ProtectedRoute
+            element={<AppShell><ReviewDecisions /></AppShell>}
+            allowedRoles={["HOD", "Admin"]}
+          />
+        }
+      />
+      <Route
+        path="/commissioner/review-decisions/:id"
         element={
           <ProtectedRoute
             element={<AppShell><DecisionReview /></AppShell>}
