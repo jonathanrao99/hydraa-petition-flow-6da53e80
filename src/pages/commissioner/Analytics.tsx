@@ -1,8 +1,8 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import PageHeader from "@/components/common/PageHeader";
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
@@ -13,7 +13,7 @@ import {
   ChartTooltip,
   ChartTooltipContent
 } from "@/components/ui/chart";
-import { BarChart3, PieChart as PieChartIcon, LineChart as LineChartIcon, Filter } from "lucide-react";
+import { BarChart3, PieChart as PieChartIcon, LineChart as LineChartIcon, Filter, TrendingUp, AlertTriangle, Clock, CheckCircle } from "lucide-react";
 
 // Mock data - would be replaced with actual data from API
 const petitionsByType = [
@@ -67,6 +67,30 @@ const COLORS = [
   "#EF4444", // Red
 ];
 
+// Additional mock data for tables
+const topOfficers = [
+  { name: "Jane Smith", petitionsHandled: 45, avgResolutionTime: "5.2 days", successRate: "92%" },
+  { name: "Rao Kumar", petitionsHandled: 38, avgResolutionTime: "6.1 days", successRate: "88%" },
+  { name: "Anjali Sharma", petitionsHandled: 32, avgResolutionTime: "7.3 days", successRate: "85%" },
+  { name: "Suresh Reddy", petitionsHandled: 28, avgResolutionTime: "8.5 days", successRate: "82%" },
+  { name: "Priya Patel", petitionsHandled: 25, avgResolutionTime: "9.2 days", successRate: "80%" },
+];
+
+const priorityPetitions = [
+  { id: "PTN00045", type: "Road Encroachment", zone: "Hyderabad West", daysPending: 2, assignedTo: "Jane Smith" },
+  { id: "PTN00032", type: "Lake Encroachment", zone: "Hyderabad East", daysPending: 3, assignedTo: "Rao Kumar" },
+  { id: "PTN00067", type: "Public Land", zone: "Hyderabad Central", daysPending: 1, assignedTo: "Anjali Sharma" },
+  { id: "PTN00089", type: "Buffer Zone", zone: "Cyberabad", daysPending: 4, assignedTo: "Suresh Reddy" },
+  { id: "PTN00012", type: "FTL Encroachment", zone: "Rachakonda", daysPending: 2, assignedTo: "Priya Patel" },
+];
+
+const keyMetrics = [
+  { title: "Total Petitions", value: "285", trend: "+15%", icon: TrendingUp, color: "text-purple-600" },
+  { title: "Pending Petitions", value: "81", trend: "-8%", icon: AlertTriangle, color: "text-orange-600" },
+  { title: "Avg Resolution Time", value: "8.2 days", trend: "-12%", icon: Clock, color: "text-blue-600" },
+  { title: "Success Rate", value: "85%", trend: "+5%", icon: CheckCircle, color: "text-green-600" },
+];
+
 const Analytics = () => {
   const [period, setPeriod] = useState("year");
   const [activeTab, setActiveTab] = useState("overview");
@@ -95,6 +119,28 @@ const Analytics = () => {
         description="Comprehensive analysis of petitions and decisions"
       />
 
+      {/* Key Metrics */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {keyMetrics.map((metric, index) => (
+          <Card key={index}>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">{metric.title}</p>
+                  <p className="text-2xl font-bold mt-1">{metric.value}</p>
+                  <p className={`text-sm font-medium ${metric.trend.startsWith('+') ? 'text-green-600' : 'text-red-600'}`}>
+                    {metric.trend} from last period
+                  </p>
+                </div>
+                <div className={`p-3 rounded-full bg-opacity-10 ${metric.color.replace('text-', 'bg-')}`}>
+                  <metric.icon className={`h-6 w-6 ${metric.color}`} />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
       <div className="flex items-center justify-between">
         <Tabs defaultValue={activeTab} value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="mb-6">
@@ -111,6 +157,116 @@ const Analytics = () => {
               Decision Analysis
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="overview" className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Petitions by Encroachment Type</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-[350px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={petitionsByType} layout="vertical">
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis type="number" />
+                        <YAxis type="category" dataKey="name" width={120} />
+                        <Tooltip content={customTooltip} />
+                        <Legend />
+                        <Bar dataKey="value" fill="#8B5CF6" name="Petitions" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Petitions by Zone</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-[350px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={petitionsByZone}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={true}
+                          label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                          outerRadius={100}
+                          fill="#8884d8"
+                          dataKey="value"
+                        >
+                          {petitionsByZone.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip content={customTooltip} />
+                        <Legend />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="petitions" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Monthly Petition Statistics</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="h-[400px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={monthlyPetitions}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" />
+                      <YAxis />
+                      <Tooltip content={customTooltip} />
+                      <Legend />
+                      <Line type="monotone" dataKey="new" stroke="#8B5CF6" activeDot={{ r: 8 }} name="New Petitions" />
+                      <Line type="monotone" dataKey="closed" stroke="#10B981" name="Closed Petitions" />
+                      <Line type="monotone" dataKey="pending" stroke="#F59E0B" name="Pending Petitions" />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="decisions" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Decision Analysis</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="h-[400px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={decisionStats}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={true}
+                        label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                        outerRadius={100}
+                        fill="#8884d8"
+                        dataKey="value"
+                      >
+                        {decisionStats.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip content={customTooltip} />
+                      <Legend />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
         </Tabs>
         
         <div className="flex items-center gap-2">
@@ -129,215 +285,110 @@ const Analytics = () => {
         </div>
       </div>
 
-      <TabsContent value="overview" className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Petitions by Encroachment Type</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="h-[350px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={petitionsByType} layout="vertical">
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis type="number" />
-                    <YAxis type="category" dataKey="name" width={120} />
-                    <Tooltip content={customTooltip} />
-                    <Legend />
-                    <Bar dataKey="value" fill="#8B5CF6" name="Petitions" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Petitions by Zone</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="h-[350px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={petitionsByZone}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={true}
-                      label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                      outerRadius={100}
-                      fill="#8884d8"
-                      dataKey="value"
-                    >
-                      {petitionsByZone.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip content={customTooltip} />
-                    <Legend />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </TabsContent>
-
-      <TabsContent value="petitions" className="space-y-6">
+      {/* Key Findings and Tables */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>Monthly Petition Statistics</CardTitle>
+            <CardTitle>Top Performing Officers</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-[400px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={monthlyPetitions}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip content={customTooltip} />
-                  <Legend />
-                  <Line type="monotone" dataKey="new" stroke="#8B5CF6" activeDot={{ r: 8 }} name="New Petitions" />
-                  <Line type="monotone" dataKey="closed" stroke="#10B981" name="Closed Petitions" />
-                  <Line type="monotone" dataKey="pending" stroke="#F97316" name="Pending Petitions" />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Officer</TableHead>
+                  <TableHead>Petitions Handled</TableHead>
+                  <TableHead>Avg Resolution Time</TableHead>
+                  <TableHead>Success Rate</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {topOfficers.map((officer, index) => (
+                  <TableRow key={index}>
+                    <TableCell className="font-medium">{officer.name}</TableCell>
+                    <TableCell>{officer.petitionsHandled}</TableCell>
+                    <TableCell>{officer.avgResolutionTime}</TableCell>
+                    <TableCell>{officer.successRate}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </CardContent>
         </Card>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="bg-purple-50">
-            <CardHeader>
-              <CardTitle className="text-center text-purple-800">Total Petitions</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-5xl font-bold text-center text-purple-700">285</div>
-              <div className="text-center text-purple-600 mt-2">+15% from last period</div>
-            </CardContent>
-          </Card>
-          
-          <Card className="bg-green-50">
-            <CardHeader>
-              <CardTitle className="text-center text-green-800">Resolved Petitions</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-5xl font-bold text-center text-green-700">204</div>
-              <div className="text-center text-green-600 mt-2">71.5% resolution rate</div>
-            </CardContent>
-          </Card>
-          
-          <Card className="bg-orange-50">
-            <CardHeader>
-              <CardTitle className="text-center text-orange-800">Pending Petitions</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-5xl font-bold text-center text-orange-700">81</div>
-              <div className="text-center text-orange-600 mt-2">Average age: 12 days</div>
-            </CardContent>
-          </Card>
-        </div>
-      </TabsContent>
-
-      <TabsContent value="decisions" className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Decision Outcome Distribution</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="h-[350px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={decisionStats}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={true}
-                      label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                      outerRadius={100}
-                      fill="#8884d8"
-                      dataKey="value"
-                    >
-                      <Cell fill="#10B981" /> {/* Green */}
-                      <Cell fill="#8B5CF6" /> {/* Purple */}
-                      <Cell fill="#F97316" /> {/* Orange */}
-                    </Pie>
-                    <Tooltip content={customTooltip} />
-                    <Legend />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Decision Metrics</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-6">
-                <div>
-                  <h3 className="text-sm font-medium mb-2">Average Decision Time</h3>
-                  <div className="h-3 w-full bg-gray-200 rounded-full overflow-hidden">
-                    <div className="h-full bg-purple-500 rounded-full" style={{ width: "65%" }}></div>
-                  </div>
-                  <div className="flex justify-between text-sm mt-1">
-                    <span>0 days</span>
-                    <span className="font-medium">8.2 days</span>
-                    <span>15 days</span>
-                  </div>
-                </div>
-                
-                <div>
-                  <h3 className="text-sm font-medium mb-2">Decision Clarity Index</h3>
-                  <div className="h-3 w-full bg-gray-200 rounded-full overflow-hidden">
-                    <div className="h-full bg-green-500 rounded-full" style={{ width: "85%" }}></div>
-                  </div>
-                  <div className="flex justify-between text-sm mt-1">
-                    <span>Low</span>
-                    <span className="font-medium">8.5/10</span>
-                    <span>High</span>
-                  </div>
-                </div>
-                
-                <div>
-                  <h3 className="text-sm font-medium mb-2">Officer Assignment Efficiency</h3>
-                  <div className="h-3 w-full bg-gray-200 rounded-full overflow-hidden">
-                    <div className="h-full bg-blue-500 rounded-full" style={{ width: "78%" }}></div>
-                  </div>
-                  <div className="flex justify-between text-sm mt-1">
-                    <span>Low</span>
-                    <span className="font-medium">7.8/10</span>
-                    <span>High</span>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-        
         <Card>
           <CardHeader>
-            <CardTitle>Decision Outcome by Encroachment Type</CardTitle>
+            <CardTitle>Priority Petitions</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-[400px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={petitionsByType} layout="vertical">
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis type="number" />
-                  <YAxis type="category" dataKey="name" width={150} />
-                  <Tooltip content={customTooltip} />
-                  <Legend />
-                  <Bar dataKey="value" stackId="a" fill="#10B981" name="Approved" />
-                  <Bar dataKey="value" stackId="a" fill="#F97316" name="Denied" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Petition ID</TableHead>
+                  <TableHead>Type</TableHead>
+                  <TableHead>Zone</TableHead>
+                  <TableHead>Days Pending</TableHead>
+                  <TableHead>Assigned To</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {priorityPetitions.map((petition, index) => (
+                  <TableRow key={index}>
+                    <TableCell className="font-medium">{petition.id}</TableCell>
+                    <TableCell>{petition.type}</TableCell>
+                    <TableCell>{petition.zone}</TableCell>
+                    <TableCell>{petition.daysPending}</TableCell>
+                    <TableCell>{petition.assignedTo}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </CardContent>
         </Card>
-      </TabsContent>
+      </div>
+
+      {/* Key Findings Summary */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Key Findings</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div className="flex items-start gap-4">
+              <div className="p-2 rounded-full bg-green-100">
+                <CheckCircle className="h-5 w-5 text-green-600" />
+              </div>
+              <div>
+                <h4 className="font-medium">Improved Resolution Times</h4>
+                <p className="text-sm text-muted-foreground">
+                  Average resolution time has decreased by 12% compared to last quarter, indicating improved efficiency in handling petitions.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start gap-4">
+              <div className="p-2 rounded-full bg-blue-100">
+                <TrendingUp className="h-5 w-5 text-blue-600" />
+              </div>
+              <div>
+                <h4 className="font-medium">Increased Petition Volume</h4>
+                <p className="text-sm text-muted-foreground">
+                  Total petitions have increased by 15% this quarter, with a particular rise in Road Encroachment cases.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start gap-4">
+              <div className="p-2 rounded-full bg-orange-100">
+                <AlertTriangle className="h-5 w-5 text-orange-600" />
+              </div>
+              <div>
+                <h4 className="font-medium">Pending Petitions</h4>
+                <p className="text-sm text-muted-foreground">
+                  While pending petitions have decreased by 8%, there are still 81 cases requiring immediate attention.
+                </p>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

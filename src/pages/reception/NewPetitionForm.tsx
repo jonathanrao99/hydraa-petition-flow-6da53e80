@@ -50,7 +50,6 @@ const formSchema = z.object({
   respondentPhone: z.string().min(10, { message: "Phone number must be at least 10 digits" }),
   encroachmentAddress: z.string().min(10, { message: "Encroachment address must be at least 10 characters" }),
   initialRemark: z.string().optional(),
-  timeBound: z.string(),
   // These will be handled separately
   // encroachmentZone: z.object({
   //   level1: z.string(),
@@ -88,7 +87,6 @@ const NewPetitionForm = () => {
       respondentPhone: "",
       encroachmentAddress: "",
       initialRemark: "",
-      timeBound: "",
     },
   });
 
@@ -103,6 +101,7 @@ const NewPetitionForm = () => {
       status: "Pending",
       createdBy: currentUser?.id || "",
       assignedOfficers: [],
+      timeBound: "Normal", // Set default time bound as Normal
     };
     
     console.log("Petition Data:", petitionData);
@@ -463,36 +462,6 @@ const NewPetitionForm = () => {
                 </div>
               </div>
 
-              <div className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="timeBound"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Time Bound for Enquiry</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select priority" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {TIME_BOUND_OPTIONS.map((option) => (
-                            <SelectItem key={option.value} value={option.value}>
-                              {option.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormDescription>
-                        Priority petitions are processed first
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              
               <div className="flex justify-end space-x-4">
                 <Button type="button" variant="outline" onClick={() => navigate("/reception")}>
                   Cancel

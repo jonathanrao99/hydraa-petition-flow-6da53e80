@@ -3,11 +3,12 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FileText, Clock, CheckCircle, UserCheck } from "lucide-react";
+import { FileText, Clock, CheckCircle, UserCheck, BarChart2 } from "lucide-react";
 import PageHeader from "@/components/common/PageHeader";
 import StatCard from "@/components/common/StatCard";
 import StatusBadge from "@/components/common/StatusBadge";
 import { reviewDecisions } from "@/pages/commissioner/ReviewDecisions";
+import Analytics from "@/pages/commissioner/Analytics";
 
 // Mock data - would be fetched from API in a real app
 const pendingPetitions = [
@@ -154,6 +155,10 @@ const CommissionerDashboard = () => {
           <TabsTrigger value="pending">Pending Assignment</TabsTrigger>
           <TabsTrigger value="assigned">Under Investigation</TabsTrigger>
           <TabsTrigger value="decided">Decisions Made</TabsTrigger>
+          <TabsTrigger value="analytics" className="flex items-center gap-2">
+            <BarChart2 className="h-4 w-4" />
+            Analytics
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="overview" className="space-y-4">
           <Card>
@@ -389,6 +394,9 @@ const CommissionerDashboard = () => {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+        <TabsContent value="analytics">
+          <Analytics />
         </TabsContent>
       </Tabs>
     </div>

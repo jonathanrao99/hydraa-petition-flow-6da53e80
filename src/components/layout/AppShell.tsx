@@ -1,4 +1,3 @@
-
 import { ReactNode } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -14,6 +13,7 @@ import {
   Menu,
   X,
   BarChart3,
+  BarChart2,
 } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
@@ -154,6 +154,12 @@ const AppShell = ({ children }: AppShellProps) => {
             icon: FileText, 
             title: "Review Decisions",
             tooltip: "Review and track all decisions made on petitions" 
+          },
+          { 
+            href: "/commissioner/analytics", 
+            icon: BarChart2, 
+            title: "Analytics",
+            tooltip: "View comprehensive analytics and statistics" 
           },
         ];
       case "Admin":

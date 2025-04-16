@@ -112,16 +112,18 @@ export const LOCATION_DATA = [
 
 // Demo encroachment types for multi-select
 export const ENCROACHMENT_TYPES = [
-  { id: "1", name: "Road Encroachment" },
-  { id: "2", name: "Lake Encroachment" },
-  { id: "3", name: "Footpath Encroachment" },
-  { id: "4", name: "Park Encroachment" },
-  { id: "5", name: "Government Land Encroachment" },
-  { id: "6", name: "Water Body Encroachment" },
-  { id: "7", name: "Railway Land Encroachment" },
-  { id: "8", name: "Forest Land Encroachment" },
-  { id: "9", name: "Heritage Site Encroachment" },
-  { id: "10", name: "Waqf Property Encroachment" }
+  { id: "1", name: "Park Encroachment" },
+  { id: "2", name: "Nala Encroachment" },
+  { id: "3", name: "Lake Encroachment" },
+  { id: "4", name: "Government Land Encroachment" },
+  { id: "5", name: "Open Space Encroachment" },
+  { id: "6", name: "FTL Encroachment" },
+  { id: "7", name: "Buffer Zone Encroachment" },
+  { id: "8", name: "Road Encroachment" },
+  { id: "9", name: "Unauthorized Construction" },
+  { id: "10", name: "Layout Violation" },
+  { id: "11", name: "Footpath Encroachment" },
+  { id: "12", name: "Other" }
 ];
 
 // Petition status options
