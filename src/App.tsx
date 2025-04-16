@@ -26,11 +26,11 @@ import NotFound from "@/pages/NotFound";
 import PendingPetitions from "@/pages/commissioner/PendingPetitions";
 import DecidedPetitions from "@/pages/commissioner/DecidedPetitions";
 import ReviewDecisions from "@/pages/commissioner/ReviewDecisions";
-import { FileText } from "lucide-react";
+import Analytics from "@/pages/commissioner/Analytics";
+import { FileText, BarChart3 } from "lucide-react";
 
 const queryClient = new QueryClient();
 
-// Protected route component
 const ProtectedRoute = ({ 
   element, 
   allowedRoles = [], 
@@ -45,7 +45,6 @@ const ProtectedRoute = ({
   }
   
   if (allowedRoles.length > 0 && currentUser && !allowedRoles.includes(currentUser.role)) {
-    // Redirect to appropriate dashboard based on role
     switch (currentUser.role) {
       case "Reception":
         return <Navigate to="/reception" replace />;
@@ -66,13 +65,11 @@ const ProtectedRoute = ({
 const AppRoutes = () => {
   const { isAuthenticated, currentUser } = useAuth();
   
-  // If authenticated, redirect to appropriate dashboard
   const renderHome = () => {
     if (!isAuthenticated) {
       return <LoginPage />;
     }
     
-    // Redirect based on user role
     switch (currentUser?.role) {
       case "Reception":
         return <Navigate to="/reception" replace />;
@@ -91,7 +88,6 @@ const AppRoutes = () => {
     <Routes>
       <Route path="/" element={renderHome()} />
       
-      {/* Reception routes */}
       <Route
         path="/reception"
         element={
@@ -120,7 +116,6 @@ const AppRoutes = () => {
         }
       />
       
-      {/* Enquiry Officer routes */}
       <Route
         path="/officer"
         element={
@@ -158,12 +153,20 @@ const AppRoutes = () => {
         }
       />
       
-      {/* Commissioner (HOD) routes */}
       <Route
         path="/commissioner"
         element={
           <ProtectedRoute
             element={<AppShell><CommissionerDashboard /></AppShell>}
+            allowedRoles={["HOD", "Admin"]}
+          />
+        }
+      />
+      <Route
+        path="/commissioner/analytics"
+        element={
+          <ProtectedRoute
+            element={<AppShell><Analytics /></AppShell>}
             allowedRoles={["HOD", "Admin"]}
           />
         }
@@ -241,7 +244,6 @@ const AppRoutes = () => {
         }
       />
       
-      {/* Admin routes */}
       <Route
         path="/admin"
         element={
@@ -279,7 +281,6 @@ const AppRoutes = () => {
         }
       />
       
-      {/* Catch-all route */}
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
