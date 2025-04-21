@@ -8,6 +8,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle, CheckCircle2, XCircle, Clock, Loader2 } from "lucide-react";
 import PageHeader from "@/components/common/PageHeader";
 import StatusBadge from "@/components/common/StatusBadge";
+import { COMMISSIONER_NAME } from "@/lib/constants";
 
 type PetitionStatus = "Pending" | "Under Investigation" | "Decision Made" | "Approved" | "Denied" | "Partially Approved" | "Closed";
 type DecisionStatus = "Approved" | "Denied" | "Partially Approved" | "Pending";
@@ -395,7 +396,7 @@ const DecisionReview = () => {
               )}
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium">Commissioner Remarks</label>
+              <label className="text-sm font-medium">{`${COMMISSIONER_NAME} Remarks`}</label>
               {isReadOnly ? (
                 <div className="p-3 bg-muted rounded-md">
                   <p className="text-sm">{decision}</p>

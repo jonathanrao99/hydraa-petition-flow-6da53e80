@@ -11,6 +11,7 @@ import { ArrowLeft, FileUp, Save, Trash2, Upload } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import PageHeader from "@/components/common/PageHeader";
 import StatusBadge from "@/components/common/StatusBadge";
+import { COMMISSIONER_NAME } from "@/lib/constants";
 
 // Mock petition data - in a real app, this would be fetched from an API
 const petitionData = {
@@ -150,7 +151,7 @@ const FeedbackSubmission = () => {
             </div>
             
             <div>
-              <Label>Commissioner's Instructions</Label>
+              <Label>{`${COMMISSIONER_NAME}'s Instructions`}</Label>
               <div className="rounded-md border p-3 mt-1 bg-muted">
                 {petitionData.commissionerInstructions}
               </div>

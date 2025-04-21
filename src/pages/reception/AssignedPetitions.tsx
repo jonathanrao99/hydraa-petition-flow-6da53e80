@@ -31,7 +31,7 @@ const mockPetitions = [
     status: "Assigned",
     type: "General",
     zone: "Hyderabad West",
-    assignedTo: "John Doe"
+    assignedTo: "Sujeeth"
   },
   {
     id: "2",
@@ -41,7 +41,7 @@ const mockPetitions = [
     status: "Under Investigation",
     type: "Priority",
     zone: "Hyderabad East",
-    assignedTo: "Jane Smith"
+    assignedTo: "Bachi reddy"
   },
   {
     id: "3",
@@ -51,6 +51,6 @@ const mockPetitions = [
     status: "Decision Made",
     type: "Immediate",
     zone: "Hyderabad North",
-    assignedTo: "Mike Johnson"
+    assignedTo: "Tirumalesh"
   }
 ]; 

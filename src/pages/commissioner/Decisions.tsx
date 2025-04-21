@@ -17,7 +17,7 @@ const pendingDecisions = [
     submissionDate: "18-04-2024",
     status: "Under Investigation" as const,
     officerRecommendation: "Action Required",
-    assignedOfficers: ["Jane Smith", "Rao Kumar"],
+    assignedOfficers: ["Sujeeth", "Bachi reddy"],
     evidenceCount: 5
   },
   {
@@ -27,7 +27,7 @@ const pendingDecisions = [
     submissionDate: "17-04-2024",
     status: "Under Investigation" as const,
     officerRecommendation: "No Action Required",
-    assignedOfficers: ["Anjali Sharma"],
+    assignedOfficers: ["Tirumalesh"],
     evidenceCount: 3
   },
   {
@@ -37,7 +37,7 @@ const pendingDecisions = [
     submissionDate: "16-04-2024",
     status: "Under Investigation" as const,
     officerRecommendation: "Action Required",
-    assignedOfficers: ["Jane Smith"],
+    assignedOfficers: ["Sujeeth"],
     evidenceCount: 7
   }
 ];

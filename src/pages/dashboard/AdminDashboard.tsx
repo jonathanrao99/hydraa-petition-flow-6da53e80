@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -8,6 +7,7 @@ import { FileText, Users, Settings, Database, Plus } from "lucide-react";
 import PageHeader from "@/components/common/PageHeader";
 import StatCard from "@/components/common/StatCard";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { COMMISSIONER_NAME } from "@/lib/constants";
 
 // Mock data - would be fetched from API in a real app
 const recentUsers = [
@@ -139,8 +139,8 @@ const AdminDashboard = () => {
                         <span className="font-medium">12</span>
                       </div>
                       <div className="flex justify-between">
-                        <span>Commissioners</span>
-                        <span className="font-medium">3</span>
+                        <span>{COMMISSIONER_NAME}</span>
+                        <span className="font-medium">1</span>
                       </div>
                       <div className="flex justify-between">
                         <span>Administrators</span>

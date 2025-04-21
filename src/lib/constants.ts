@@ -175,3 +175,19 @@ export const PETITION_TYPES = [
   { value: "Twitter", label: "Twitter" },
   { value: "Other", label: "Other" }
 ];
+
+// Enquiry officers list
+export const ENQUIRY_OFFICERS = [
+  { id: "officer1", name: "Sujeeth", designation: "Inspector", userId: "Sujeeth/Inspector" },
+  { id: "officer2", name: "Bachi Reddy", designation: "Inspector", userId: "Bachi/Inspector" },
+  { id: "officer3", name: "Tirumalesh", designation: "Inspector", userId: "Tirumalesh/Inspector" },
+  { id: "officer4", name: "Adithya", designation: "Inspector", userId: "Adithya/Inspector" },
+  { id: "officer5", name: "Naresh", designation: "Inspector", userId: "Naresh/Inspector" },
+  { id: "officer6", name: "Saidulu", designation: "Inspector", userId: "Saidulu/Inspector" },
+  { id: "officer7", name: "Rajasheakar", designation: "Inspector", userId: "Rajasheakar/Inspector" },
+  { id: "officer8", name: "Bala Gopal", designation: "Inspector", userId: "Bala/Inspector" },
+  { id: "officer9", name: "Malleshwar", designation: "Inspector", userId: "Malleshwar/Inspector" }
+];
+
+// Commissioner name constant
+export const COMMISSIONER_NAME = "Sri. A.V. Ranganath, IPS";

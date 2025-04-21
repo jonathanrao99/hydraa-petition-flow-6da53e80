@@ -9,6 +9,7 @@ import StatCard from "@/components/common/StatCard";
 import StatusBadge from "@/components/common/StatusBadge";
 import { reviewDecisions } from "@/pages/commissioner/ReviewDecisions";
 import Analytics from "@/pages/commissioner/Analytics";
+import { COMMISSIONER_NAME } from "@/lib/constants";
 
 // Mock data - would be fetched from API in a real app
 const pendingPetitions = [
@@ -45,7 +46,7 @@ const assignedPetitions = [
     petitionerName: "Lakshmi Devi",
     date: "12-04-2024",
     status: "Assigned",
-    assignedTo: ["Jane Smith", "Rao Kumar"],
+    assignedTo: ["Sujeeth", "Bachi reddy"],
     timeBound: "Priority",
   },
   {
@@ -54,7 +55,7 @@ const assignedPetitions = [
     petitionerName: "Ravi Reddy",
     date: "11-04-2024",
     status: "Under Investigation",
-    assignedTo: ["Jane Smith", "Rao Kumar", "Anjali Sharma"],
+    assignedTo: ["Sujeeth", "Bachi reddy", "Tirumalesh"],
     timeBound: "Normal",
   },
 ];
@@ -110,7 +111,7 @@ const CommissionerDashboard = () => {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Commissioner Dashboard"
+        title={`${COMMISSIONER_NAME} Dashboard`}
         description="Manage petitions and assign enquiry officers"
         showLogo={true}
       />

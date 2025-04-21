@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { X } from "lucide-react";
 import StatusBadge from "@/components/common/StatusBadge";
+import { COMMISSIONER_NAME } from "@/lib/constants";
 
 interface PetitionDetailsModalProps {
   isOpen: boolean;
@@ -181,7 +182,7 @@ const PetitionDetailsModal = ({ isOpen, onClose, petition }: PetitionDetailsModa
           {petition.finalDecision && (
             <Card>
               <CardContent className="p-6">
-                <h3 className="text-lg font-semibold mb-4">Commissioner Remarks</h3>
+                <h3 className="text-lg font-semibold mb-4">{`${COMMISSIONER_NAME} Remarks`}</h3>
                 <p className="text-muted-foreground">{petition.finalDecision}</p>
               </CardContent>
             </Card>

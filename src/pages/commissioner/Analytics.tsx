@@ -69,11 +69,11 @@ const COLORS = [
 
 // Additional mock data for tables
 const topOfficers = [
-  { name: "Jane Smith", petitionsHandled: 45, avgResolutionTime: "5.2 days", successRate: "92%" },
-  { name: "Rao Kumar", petitionsHandled: 38, avgResolutionTime: "6.1 days", successRate: "88%" },
-  { name: "Anjali Sharma", petitionsHandled: 32, avgResolutionTime: "7.3 days", successRate: "85%" },
-  { name: "Suresh Reddy", petitionsHandled: 28, avgResolutionTime: "8.5 days", successRate: "82%" },
-  { name: "Priya Patel", petitionsHandled: 25, avgResolutionTime: "9.2 days", successRate: "80%" },
+  { name: "Sujeeth", petitionsHandled: 45, avgResolutionTime: "5.2 days", successRate: "92%" },
+  { name: "Bachi Reddy", petitionsHandled: 38, avgResolutionTime: "6.1 days", successRate: "88%" },
+  { name: "Tirumalesh", petitionsHandled: 32, avgResolutionTime: "7.3 days", successRate: "85%" },
+  { name: "Aditya", petitionsHandled: 28, avgResolutionTime: "8.5 days", successRate: "82%" },
+  { name: "Naresh", petitionsHandled: 25, avgResolutionTime: "9.2 days", successRate: "80%" },
 ];
 
 const priorityPetitions = [

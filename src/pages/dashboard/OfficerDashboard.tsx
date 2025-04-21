@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import NotificationService from "@/services/notificationService";
+import { COMMISSIONER_NAME } from "@/lib/constants";
 
 // Define the Petition type
 type Petition = {
@@ -135,7 +136,7 @@ const OfficerDashboard = () => {
         {
           userId: "commissioner",
           email: "commissioner@hydraa.gov",
-          name: "Commissioner",
+          name: COMMISSIONER_NAME,
         },
       ],
     });

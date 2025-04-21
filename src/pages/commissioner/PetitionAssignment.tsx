@@ -16,15 +16,10 @@ import { UserCheck, Save, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import PageHeader from "@/components/common/PageHeader";
 import StatusBadge from "@/components/common/StatusBadge";
+import { ENQUIRY_OFFICERS } from "@/lib/constants";
 
-// Mock data for officers
-const officers = [
-  { id: "officer1", name: "Jane Smith", designation: "ACP", userId: "Jane/ACP" },
-  { id: "officer2", name: "Rao Kumar", designation: "Inspector", userId: "Rao/Inspector" },
-  { id: "officer3", name: "Anjali Sharma", designation: "Inspector", userId: "Anjali/Inspector" },
-  { id: "officer4", name: "Suresh Reddy", designation: "DCP", userId: "Suresh/DCP" },
-  { id: "officer5", name: "Prakash Rao", designation: "ACP", userId: "Prakash/ACP" },
-];
+// Centralized enquiry officers list
+const officers = ENQUIRY_OFFICERS;
 
 // Mock petition data - in a real app, this would be fetched from an API
 const petitionData = {

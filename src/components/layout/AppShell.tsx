@@ -273,7 +273,7 @@ const AppShell = ({ children }: AppShellProps) => {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <span className="text-sm mr-2">
-                        {currentUser.name} ({currentUser.designation})
+                        {currentUser.name}
                       </span>
                     </TooltipTrigger>
                     <TooltipContent>

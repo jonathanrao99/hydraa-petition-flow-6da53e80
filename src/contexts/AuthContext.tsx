@@ -1,13 +1,13 @@
-
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { User } from "@/types";
+import { COMMISSIONER_NAME } from "@/lib/constants";
 
 // Mock user data - in a real app, this would be fetched from a database
 const mockUsers: User[] = [
   {
     id: "1",
     employeeId: "EMP001",
-    name: "John Doe",
+    name: "Naresh",
     designation: "DCP",
     role: "Reception",
     email: "reception@hydraa.gov.in",
@@ -17,7 +17,7 @@ const mockUsers: User[] = [
   {
     id: "2",
     employeeId: "EMP002",
-    name: "Jane Smith",
+    name: "Sujeeth",
     designation: "ACP",
     role: "EnquiryOfficer",
     email: "officer@hydraa.gov.in",
@@ -27,7 +27,7 @@ const mockUsers: User[] = [
   {
     id: "3",
     employeeId: "EMP003",
-    name: "Michael Brown",
+    name: COMMISSIONER_NAME,
     designation: "DCP",
     role: "HOD",
     email: "commissioner@hydraa.gov.in",
@@ -37,7 +37,7 @@ const mockUsers: User[] = [
   {
     id: "4",
     employeeId: "EMP004",
-    name: "Admin User",
+    name: "Venkatesh",
     designation: "Other",
     role: "Admin",
     email: "admin@hydraa.gov.in",
@@ -63,7 +63,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Check if user is already logged in
     const storedUser = localStorage.getItem("hydraa_user");
     if (storedUser) {
-      setCurrentUser(JSON.parse(storedUser));
+      const parsedUser = JSON.parse(storedUser) as User;
+      // Override the Reception user's name to keep it in sync
+      if (parsedUser.role === "Reception") {
+        parsedUser.name = "Naresh";
+        localStorage.setItem("hydraa_user", JSON.stringify(parsedUser));
+      } else if (parsedUser.role === "EnquiryOfficer") {
+        parsedUser.name = "Sujeeth";
+        localStorage.setItem("hydraa_user", JSON.stringify(parsedUser));
+      } else if (parsedUser.role === "Admin") {
+        parsedUser.name = "Venkatesh";
+        localStorage.setItem("hydraa_user", JSON.stringify(parsedUser));
+      }
+      setCurrentUser(parsedUser);
       setIsAuthenticated(true);
     }
   }, []);
