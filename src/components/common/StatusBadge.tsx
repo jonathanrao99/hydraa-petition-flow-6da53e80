@@ -1,4 +1,5 @@
 
+import { memo } from "react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
@@ -30,4 +31,4 @@ const StatusBadge = ({ status, className }: StatusBadgeProps) => {
   );
 };
 
-export default StatusBadge;
+export default memo(StatusBadge);

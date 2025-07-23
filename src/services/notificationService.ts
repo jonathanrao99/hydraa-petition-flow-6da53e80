@@ -90,12 +90,12 @@ class NotificationService {
   // Private helper methods
   private async sendEmailNotifications(notification: Notification): Promise<void> {
     // In a real app, this would send emails using a service like SendGrid or AWS SES
-    console.log("Sending email notifications:", notification);
+    // Implementation would go here
   }
 
   private async sendPushNotifications(notification: Notification): Promise<void> {
     // In a real app, this would send push notifications using a service like Firebase Cloud Messaging
-    console.log("Sending push notifications:", notification);
+    // Implementation would go here
   }
 }
 

@@ -1,5 +1,5 @@
 
-import { ReactNode } from "react";
+import { ReactNode, memo } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
@@ -114,4 +114,4 @@ const StatCard = ({
   );
 };
 
-export default StatCard;
+export default memo(StatCard);

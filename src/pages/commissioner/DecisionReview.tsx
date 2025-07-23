@@ -164,11 +164,7 @@ const DecisionReview = () => {
 
     try {
       // In a real app, this would be an API call
-      console.log("Submitting decision:", {
-        petitionId: id,
-        decision,
-        decisionStatus
-      });
+      // Decision data would be sent to API here
 
       // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 1000));

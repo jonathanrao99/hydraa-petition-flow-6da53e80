@@ -46,7 +46,7 @@ const petitionData = {
 };
 
 // Mock data for officer notifications
-let officerNotifications: Record<string, any[]> = {};
+const officerNotifications: Record<string, unknown[]> = {};
 
 const PetitionAssignment = () => {
   const { id } = useParams();

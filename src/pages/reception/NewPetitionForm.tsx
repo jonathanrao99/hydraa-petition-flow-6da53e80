@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -91,7 +91,7 @@ const NewPetitionForm = () => {
   });
 
   // Handle form submission
-  const onSubmit = (values: FormValues) => {
+  const onSubmit = useCallback((values: FormValues) => {
     // Combine form values with location and selected types
     const petitionData = {
       ...values,
@@ -104,7 +104,7 @@ const NewPetitionForm = () => {
       timeBound: "Normal", // Set default time bound as Normal
     };
     
-    console.log("Petition Data:", petitionData);
+    // Petition data would be sent to API here
     
     // In a real app, this would send the data to an API
     toast({
@@ -114,7 +114,7 @@ const NewPetitionForm = () => {
     
     // Navigate back to reception dashboard
     navigate("/reception");
-  };
+  }, [location, selectedTypes, currentUser?.id, toast, navigate]);
 
   return (
     <div className="space-y-6">

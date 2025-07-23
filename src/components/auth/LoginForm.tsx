@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -16,7 +16,7 @@ const LoginForm = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!email || !password) {
@@ -64,7 +64,7 @@ const LoginForm = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [email, password, login, navigate, toast]);
 
   return (
     <Card className="w-full max-w-md">

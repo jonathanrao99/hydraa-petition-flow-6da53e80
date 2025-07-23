@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { User } from "@/types";
 import { COMMISSIONER_NAME } from "@/lib/constants";
+import { storage } from "@/lib/utils";
 
 // Mock user data - in a real app, this would be fetched from a database
 const mockUsers: User[] = [
@@ -61,26 +62,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     // Check if user is already logged in
-    const storedUser = localStorage.getItem("hydraa_user");
+    const storedUser = storage.get<User | null>("hydraa_user", null);
     if (storedUser) {
-      const parsedUser = JSON.parse(storedUser) as User;
-      // Override the Reception user's name to keep it in sync
-      if (parsedUser.role === "Reception") {
-        parsedUser.name = "Naresh";
-        localStorage.setItem("hydraa_user", JSON.stringify(parsedUser));
-      } else if (parsedUser.role === "EnquiryOfficer") {
-        parsedUser.name = "Sujeeth";
-        localStorage.setItem("hydraa_user", JSON.stringify(parsedUser));
-      } else if (parsedUser.role === "Admin") {
-        parsedUser.name = "Venkatesh";
-        localStorage.setItem("hydraa_user", JSON.stringify(parsedUser));
+      // Override user names to keep them in sync
+      const userRoleMap: Record<string, string> = {
+        Reception: "Naresh",
+        EnquiryOfficer: "Sujeeth",
+        Admin: "Venkatesh",
+      };
+      
+      if (userRoleMap[storedUser.role]) {
+        storedUser.name = userRoleMap[storedUser.role];
+        storage.set("hydraa_user", storedUser);
       }
-      setCurrentUser(parsedUser);
+      
+      setCurrentUser(storedUser);
       setIsAuthenticated(true);
     }
   }, []);
 
-  const login = async (email: string, password: string): Promise<User> => {
+  const login = useCallback(async (email: string, password: string): Promise<User> => {
     // In a real app, this would make an API call to verify credentials
     // For demo purposes, we'll just check against our mock data
     
@@ -100,16 +101,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsAuthenticated(true);
     
     // Store user in localStorage for persistence
-    localStorage.setItem("hydraa_user", JSON.stringify(user));
+    storage.set("hydraa_user", user);
     
     return user;
-  };
+  }, []);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     setCurrentUser(null);
     setIsAuthenticated(false);
-    localStorage.removeItem("hydraa_user");
-  };
+    storage.remove("hydraa_user");
+  }, []);
 
   return (
     <AuthContext.Provider value={{ currentUser, login, logout, isAuthenticated }}>
